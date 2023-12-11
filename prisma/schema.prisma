@@ -8,3 +8,129 @@ datasource db {
   relationMode = "prisma"
 }
 
+model PublicUser {
+  id         String      @id
+  nic        String      @unique
+  name       String
+  phone      String
+  complaints Complaint[]
+}
+
+model Admin {
+  id   String @id
+  name String
+}
+
+model SysUser {
+  id String @id
+}
+
+model Officer {
+  id           String                       @id
+  name         String
+  officeId     String?
+  office       Office?                    @relation(fields: [officeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  level        Int
+  assignedWork InvestigationWorkflowStage[]
+
+  @@index([officeId])
+}
+
+model Complaint {
+  id                    Int            @id @default(autoincrement())
+  complaint_title       String?
+  complaint_description String?
+  complainerId          String
+  complainer            PublicUser     @relation(fields: [complainerId], references: [id])
+  assignedInstitutionId String?
+  assignedInstitution   Institution?    @relation(fields: [assignedInstitutionId], references: [id])
+  investigation         Investigation?
+
+  @@index([complainerId])
+  @@index([assignedInstitutionId])
+}
+
+model Institution {
+  id             String          @id @default(uuid())
+  name           String
+  complaints     Complaint[]
+  investigations Investigation[]
+  workflows      Workflow[]
+  divisions      Division[]      @relation("DivisionToParent")
+}
+
+model Division {
+  id               String      @id @default(uuid())
+  name             String
+  workflows        Workflow[]
+  institution      Institution @relation("DivisionToParent", fields: [id], references: [id])
+  parentDivisionId String
+  parentDivision   Division    @relation(name: "SubDivisions", fields: [parentDivisionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  subdivisons      Division[]  @relation(name: "SubDivisions")
+  offices          Office[]
+
+  @@index([id])
+  @@index([parentDivisionId])
+}
+
+model Office {
+  id             String          @id @default(uuid())
+  name           String
+  investigations Investigation[]
+  workflows      Workflow[]
+  division       Division?       @relation(fields: [divisionId], references: [id])
+  divisionId     String?
+  officers       Officer[]
+
+  @@index([divisionId])
+}
+
+model Workflow {
+  id                     Int                     @id @default(autoincrement())
+  institutionId          String?
+  institution            Institution?             @relation(fields: [institutionId], references: [id])
+  stages                 Json?
+  investigationWorkflows InvestigationWorkflow[]
+  division               Division?               @relation(fields: [divisionId], references: [id])
+  divisionId             String?
+  office                 Office?                 @relation(fields: [officeId], references: [id])
+  officeId               String?
+
+  @@index([institutionId])
+  @@index([divisionId])
+  @@index([officeId])
+}
+
+model Investigation {
+  id                     Int                    @id @default(autoincrement())
+  institutionId          String
+  institution            Institution[]
+  complaintId            Int                    @unique
+  complaint              Complaint              @relation(fields: [complaintId], references: [id])
+  inverstigationWorkflow InvestigationWorkflow?
+  office                 Office?                @relation(fields: [officeId], references: [id])
+  officeId               String?
+
+  @@index([officeId])
+}
+
+model InvestigationWorkflow {
+  id                    Int                          @id @default(autoincrement())
+  institutionWorkflowId Int
+  institutionWorkflow   Workflow                     @relation(fields: [institutionWorkflowId], references: [id])
+  investigationId       Int                          @unique
+  investigation         Investigation                @relation(fields: [investigationId], references: [id])
+  stages                InvestigationWorkflowStage[]
+
+  @@index([institutionWorkflowId])
+}
+
+model InvestigationWorkflowStage {
+  id                      Int                   @id @default(autoincrement())
+  stageName               String
+  investigationWorkflowId Int
+  investigationWorkflow   InvestigationWorkflow @relation(fields: [investigationWorkflowId], references: [id])
+  officers                Officer[]
+
+  @@index([investigationWorkflowId])
+}
