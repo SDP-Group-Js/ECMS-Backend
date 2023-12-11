@@ -94,3 +94,15 @@ async function createInstitutionWorkflow (data, institutionId) {
    })
 }
 ```
+
+## Prisma ORM setup
+To generate the updated Prisma Client
+```
+npx prisma generate
+```
+
+If chagnes are made and you want to update the schema
+```
+npx prisma db push
+```
+**Warning!** This could possible change the schema and there could be **data loss**
