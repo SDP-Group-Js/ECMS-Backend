@@ -18,7 +18,7 @@ server.use(
   })
 );
 
-server.use(helmet())
+server.use(helmet());
 
 // Mount app to server
 server.use(app);

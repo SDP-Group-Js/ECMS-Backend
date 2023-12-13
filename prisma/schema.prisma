@@ -107,7 +107,7 @@ model Investigation {
   institution            Institution[]
   complaintId            Int                    @unique
   complaint              Complaint              @relation(fields: [complaintId], references: [id])
-  inverstigationWorkflow InvestigationWorkflow?
+  investigationWorkflow  InvestigationWorkflow?
   office                 Office?                @relation(fields: [officeId], references: [id])
   officeId               String?
 
