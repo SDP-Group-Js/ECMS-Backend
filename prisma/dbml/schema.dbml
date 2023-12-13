@@ -1,0 +1,130 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table PublicUser {
+  id String [pk]
+  nic String [unique, not null]
+  name String [not null]
+  phone String [not null]
+  complaints Complaint [not null]
+}
+
+Table User {
+  id String [pk]
+  name String [not null]
+  officeId String
+  office Office
+  assignedWork InvestigationStage [not null]
+  division Division
+  divisionId String
+  instiution Institution
+  institutionId String
+}
+
+Table Complaint {
+  id Int [pk, increment]
+  complaint_title String
+  complaint_description String
+  complainerId String [not null]
+  complainer PublicUser [not null]
+  assignedInstitutionId String
+  assignedInstitution Institution
+  investigation Investigation
+}
+
+Table Institution {
+  id String [pk]
+  name String [not null]
+  complaints Complaint [not null]
+  investigations Investigation [not null]
+  users User [not null]
+  workflows Workflow [not null]
+  divisions Division [not null]
+}
+
+Table Division {
+  id String [pk]
+  name String [not null]
+  institution Institution [not null]
+  users User [not null]
+  offices Office [not null]
+  investigation Investigation [not null]
+}
+
+Table Office {
+  id String [pk]
+  name String [not null]
+  investigations Investigation [not null]
+  division Division
+  divisionId String
+  officers User [not null]
+}
+
+Table Workflow {
+  id Int [pk, increment]
+  institutionId String
+  institution Institution
+  stages Json
+  investigation Investigation [not null]
+}
+
+Table Investigation {
+  id Int [pk, increment]
+  institutionId String [not null]
+  workflowId Int [not null]
+  workflow Workflow [not null]
+  institution Institution [not null]
+  complaintId Int [unique, not null]
+  complaint Complaint [not null]
+  investigationStages InvestigationStage [not null]
+  division Division
+  office Office
+  officeId String
+  divisionId String
+}
+
+Table InvestigationStage {
+  id Int [pk, increment]
+  stageName String [not null]
+  investigationId Int [not null]
+  investigation Investigation [not null]
+  officers User [not null]
+  actions Action [not null]
+}
+
+Table Action {
+  id Int [pk, increment]
+  investigationStage InvestigationStage
+  investigationStageId Int
+  name String [not null]
+  description String
+}
+
+Ref: User.officeId > Office.id [delete: No Action]
+
+Ref: User.divisionId > Division.id
+
+Ref: User.institutionId > Institution.id
+
+Ref: Complaint.complainerId > PublicUser.id
+
+Ref: Complaint.assignedInstitutionId > Institution.id
+
+Ref: Division.id > Institution.id
+
+Ref: Office.divisionId > Division.id
+
+Ref: Workflow.institutionId > Institution.id
+
+Ref: Investigation.workflowId > Workflow.id
+
+Ref: Investigation.complaintId - Complaint.id
+
+Ref: Investigation.divisionId > Division.id
+
+Ref: Investigation.officeId > Office.id
+
+Ref: InvestigationStage.investigationId > Investigation.id
+
+Ref: Action.investigationStageId > InvestigationStage.id
