@@ -1,0 +1,131 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table PublicUser {
+  id String [pk]
+  nic String [unique, not null]
+  name String [not null]
+  phone String [not null]
+  complaints Complaint [not null]
+}
+
+Table Admin {
+  id String [pk]
+  name String [not null]
+}
+
+Table SysUser {
+  id String [pk]
+}
+
+Table Officer {
+  id String [pk]
+  name String [not null]
+  officeId String
+  office Office
+  level Int [not null]
+  assignedWork InvestigationStage [not null]
+}
+
+Table Complaint {
+  id Int [pk, increment]
+  complaint_title String
+  complaint_description String
+  complainerId String [not null]
+  complainer PublicUser [not null]
+  assignedInstitutionId String
+  assignedInstitution Institution
+  investigation Investigation
+}
+
+Table Institution {
+  id String [pk]
+  name String [not null]
+  complaints Complaint [not null]
+  investigations Investigation [not null]
+  workflows Workflow [not null]
+  divisions Division [not null]
+}
+
+Table Division {
+  id String [pk]
+  name String [not null]
+  institution Institution [not null]
+  parentDivisionId String [not null]
+  parentDivision Division [not null]
+  subdivisons Division [not null]
+  offices Office [not null]
+}
+
+Table Office {
+  id String [pk]
+  name String [not null]
+  investigations Investigation [not null]
+  division Division
+  divisionId String
+  officers Officer [not null]
+}
+
+Table Workflow {
+  id Int [pk, increment]
+  institutionId String
+  institution Institution
+  stages Json
+}
+
+Table Investigation {
+  id Int [pk, increment]
+  institutionId String [not null]
+  institution Institution [not null]
+  complaintId Int [unique, not null]
+  complaint Complaint [not null]
+  investigationStages InvestigationStage [not null]
+  office Office
+  officeId String
+}
+
+Table InvestigationStage {
+  id Int [pk, increment]
+  stageName String [not null]
+  investigationId Int [not null]
+  investigation Investigation [not null]
+  officers Officer [not null]
+}
+
+Table Action {
+  id Int [pk, increment]
+  type ActionType [not null]
+  performer ActionPerformerType [not null]
+}
+
+Enum ActionType {
+  CaptureEvidenceAction
+  EscalateAction
+  ReviewEscalteAction
+  AssignedAction
+}
+
+Enum ActionPerformerType {
+  OfficerAction
+}
+
+Ref: Officer.officeId > Office.id [delete: No Action]
+
+Ref: Complaint.complainerId > PublicUser.id
+
+Ref: Complaint.assignedInstitutionId > Institution.id
+
+Ref: Division.id > Institution.id
+
+Ref: Division.parentDivisionId - Division.id [delete: No Action]
+
+Ref: Office.divisionId > Division.id
+
+Ref: Workflow.institutionId > Institution.id
+
+Ref: Investigation.complaintId - Complaint.id
+
+Ref: Investigation.officeId > Office.id
+
+Ref: InvestigationStage.investigationId > Investigation.id
