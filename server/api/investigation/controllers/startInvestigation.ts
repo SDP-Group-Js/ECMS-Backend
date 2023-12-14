@@ -2,7 +2,8 @@ import {
   Prisma,
   PrismaClient,
   Institution,
-  Investigation
+  Investigation,
+  Complaint
 } from "@prisma/client"
 
 const prisma = new PrismaClient()
@@ -20,33 +21,32 @@ export default async function startInvestigation(
   institutionId: string,
   complaintId: number
 ): Promise<Investigation> {
-  //Check if the institution already exists
-  const institution = await prisma.institution.findUnique({
-    where: { id: institutionId }
-  })
-  if (!institution)
-    throw new Error(`Institution with id ${institutionId} not found`)
-
-  //Check if the complaint already exists
-  const complaint = await prisma.complaint.findUnique({
-    where: { id: complaintId }
-  })
-  if (!complaint) throw new Error(`Complaint with id ${complaintId} not found`)
-
-  console.log(institutionId, complaintId)
-
-  //Create Investigation
-  const investigation: Investigation = await prisma.investigation.create({
-    data: {
-      institutionId: institutionId,
-      institution: {
-        connect: {
-          id: institutionId
+  try {
+    return await prisma.$transaction(async (prisma) => {
+      //Create Investigation
+      const investigation: Investigation = await prisma.investigation.create({
+        data: {
+          institutionId: institutionId,
+          institution: {
+            connect: {
+              id: institutionId
+            }
+          },
+          complaintId: complaintId
         }
-      },
-      complaintId: complaintId,
-    }
-  })
+      })
+      if (!investigation) throw new Error(`Investigation not created`)
 
-  return investigation
+      return investigation
+    })
+  } catch (error: any) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        console.log(
+          "There is a unique constraint violation, a new investigation cannot be created with this email"
+        )
+      }
+    }
+    throw error
+  }
 }

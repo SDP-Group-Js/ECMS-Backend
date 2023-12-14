@@ -1,31 +1,31 @@
-import app from "./app";
-import "dotenv";
-import cors from "cors";
-import express from "express";
-import helmet from "helmet";
+import app from "./app"
+import "dotenv"
+import cors from "cors"
+import express from "express"
+import helmet from "helmet"
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080
 
 // Create Server
-const server = express();
+const server = express()
 
 // Add cors middleware
 server.use(
   cors({
     origin: "http://localhost:3000",
     methods: "GET, POST, PUT, DELETE, OPTIONS",
-    allowedHeaders: "Origin, Content-Type, Accept, Authorization",
+    allowedHeaders: "Origin, Content-Type, Accept, Authorization"
   })
-);
+)
 
-server.use(helmet());
+server.use(helmet())
 
 // Mount app to server
-server.use(app);
+server.use(app)
 
 // Open server with port
 server.listen(port, () => {
-  console.log(`Listening to Port ${port}`);
-});
+  console.log(`Listening to Port ${port}`)
+})
 
-module.exports = server;
+module.exports = server
