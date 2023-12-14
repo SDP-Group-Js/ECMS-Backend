@@ -21,30 +21,39 @@ model PublicUser {
 }
 
 model User {
-  id            String               @id
-  name          String
+  id   String @id
+  name String
+
   officeId      String?
-  office        Office?              @relation(fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  assignedWork  InvestigationStage[]
-  division      Division?            @relation(fields: [divisionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  divisionId    String?
-  institution   Institution?         @relation(fields: [institutionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  office        Office?      @relation(fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   institutionId String?
+  institution   Institution? @relation(fields: [institutionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  actions   Action[]
+  userRoles UserRole[]
 
   @@index([officeId])
   @@index([institutionId])
-  @@index([divisionId])
+}
+
+model UserRole {
+  id    String @id @default(cuid())
+  name  String
+  users User[]
 }
 
 model Complaint {
-  id                    Int            @id @default(autoincrement())
+  id                    Int     @id @default(autoincrement())
   complaint_title       String?
   complaint_description String?
-  complainerId          String?
-  complainer            PublicUser?    @relation(fields: [complainerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  complainerId String?
+  complainer   PublicUser? @relation(fields: [complainerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
   assignedInstitutionId String?
-  assignedInstitution   Institution?   @relation(fields: [assignedInstitutionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  investigation         Investigation?
+  assignedInstitution   Institution? @relation(fields: [assignedInstitutionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  investigation Investigation?
 
   @@index([complainerId])
   @@index([assignedInstitutionId])
@@ -57,68 +66,96 @@ model Institution {
   investigations Investigation[]
   users          User[]
   workflows      Workflow[]
-  divisions      Division[]      @relation("DivisionToParent")
-}
-
-model Division {
-  id            String          @id @default(uuid())
-  name          String
-  instiutionId  String
-  institution   Institution     @relation("DivisionToParent", fields: [instiutionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  users         User[]
-  offices       Office[]
-  investigation Investigation[]
-
-  @@index([instiutionId])
+  offices        Office[]
 }
 
 model Office {
-  id             String          @id @default(uuid())
-  name           String
-  investigations Investigation[]
-  division       Division?       @relation(fields: [divisionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  divisionId     String?
-  officers       User[]
+  id          String     @id @default(uuid())
+  name        String
+  description String?
+  type        OfficeType
 
-  @@index([divisionId])
+  instiutionId String
+  institution  Institution @relation(fields: [instiutionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  users                  User[]
+  assignedInvestigations Investigation[] @relation(name: "AssignedInvestigation")
+  involvedInvestigations Investigation[] @relation(name: "InvolvedInvestigation")
+  workflows              Workflow[]
+
+  offices  Office[] @relation(name: "Offices")
+  office   Office?  @relation(name: "Offices", fields: [officeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  officeId String?
+
+  @@index([instiutionId])
+  @@index([officeId])
+}
+
+enum OfficeType {
+  Division
+  Branch
+  BeatOffice
 }
 
 model Workflow {
-  id            Int             @id @default(autoincrement())
-  institutionId String?
-  institution   Institution?    @relation(fields: [institutionId], references: [id])
-  stages        Json?
-  investigation Investigation[]
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  stages      Json?
+
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  officeId      String?
+  office        Office?     @relation(fields: [officeId], references: [id])
+
+  investigations Investigation[]
 
   @@index([institutionId])
+  @@index([officeId])
 }
 
 model Investigation {
-  id                  Int                  @id @default(autoincrement())
-  institutionId       String
-  workflowId          Int?
-  workflow            Workflow?             @relation(fields: [workflowId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  institution         Institution[]
-  complaintId         Int?                 @unique
-  complaint           Complaint?           @relation(fields: [complaintId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  id          Int                 @id @default(autoincrement())
+  status      InvestigationStatus @default(NotAssigned)
+  description String?
+  workflow    Json?
+
+  complaintId Int?       @unique
+  complaint   Complaint? @relation(fields: [complaintId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  institutionId         String
+  institution           Institution @relation(fields: [institutionId], references: [id])
+  officeId              String?
+  office                Office?     @relation(name: "AssignedInvestigation", fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  institutionWorkflowId Int?
+  institutionWorkflow   Workflow?   @relation(fields: [institutionWorkflowId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   investigationStages InvestigationStage[]
-  division            Division?            @relation(fields: [divisionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  office              Office?              @relation(fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  officeId            String?
-  divisionId          String?
+  involvedParties     Office[]             @relation(name: "InvolvedInvestigation")
 
   @@index([officeId])
-  @@index([divisionId])
-  @@index([workflowId])
+  @@index([institutionWorkflowId])
+  @@index([institutionId])
+}
+
+enum InvestigationStatus {
+  NotAssigned
+  Ongoing
+  Completed
 }
 
 model InvestigationStage {
-  id              Int           @id @default(autoincrement())
-  stageName       String
+  id          Int     @id @default(autoincrement())
+  stageName   String
+  description String?
+  order       Int
+  tasks       Json?
+
   investigationId Int
   investigation   Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  officers        User[]
-  actions         Action[]
+
+  actions Action[]
+  status  String   @default("Pending")
 
   @@index([investigationId])
 }
@@ -129,6 +166,8 @@ model Action {
   investigationStageId Int?
   name                 String
   description          String?
+  user                 User                @relation(fields: [userId], references: [id])
+  userId               String              @unique
 
   @@index([investigationStageId])
 }
