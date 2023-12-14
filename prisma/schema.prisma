@@ -24,11 +24,11 @@ model User {
   id            String               @id
   name          String
   officeId      String?
-  office        Office?              @relation(fields: [officeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  office        Office?              @relation(fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   assignedWork  InvestigationStage[]
-  division      Division?            @relation(fields: [divisionId], references: [id])
+  division      Division?            @relation(fields: [divisionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   divisionId    String?
-  instiution    Institution?         @relation(fields: [institutionId], references: [id])
+  institution   Institution?         @relation(fields: [institutionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   institutionId String?
 
   @@index([officeId])
@@ -40,10 +40,10 @@ model Complaint {
   id                    Int            @id @default(autoincrement())
   complaint_title       String?
   complaint_description String?
-  complainerId          String
-  complainer            PublicUser     @relation(fields: [complainerId], references: [id])
+  complainerId          String?
+  complainer            PublicUser?    @relation(fields: [complainerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   assignedInstitutionId String?
-  assignedInstitution   Institution?   @relation(fields: [assignedInstitutionId], references: [id])
+  assignedInstitution   Institution?   @relation(fields: [assignedInstitutionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   investigation         Investigation?
 
   @@index([complainerId])
@@ -63,19 +63,20 @@ model Institution {
 model Division {
   id            String          @id @default(uuid())
   name          String
-  institution   Institution     @relation("DivisionToParent", fields: [id], references: [id])
+  instiutionId  String
+  institution   Institution     @relation("DivisionToParent", fields: [instiutionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   users         User[]
   offices       Office[]
   investigation Investigation[]
 
-  @@index([id])
+  @@index([instiutionId])
 }
 
 model Office {
   id             String          @id @default(uuid())
   name           String
   investigations Investigation[]
-  division       Division?       @relation(fields: [divisionId], references: [id])
+  division       Division?       @relation(fields: [divisionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   divisionId     String?
   officers       User[]
 
@@ -96,13 +97,13 @@ model Investigation {
   id                  Int                  @id @default(autoincrement())
   institutionId       String
   workflowId          Int
-  workflow            Workflow             @relation(fields: [workflowId], references: [id])
+  workflow            Workflow             @relation(fields: [workflowId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   institution         Institution[]
-  complaintId         Int                  @unique
-  complaint           Complaint            @relation(fields: [complaintId], references: [id])
+  complaintId         Int?                 @unique
+  complaint           Complaint?           @relation(fields: [complaintId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   investigationStages InvestigationStage[]
-  division            Division?            @relation(fields: [divisionId], references: [id])
-  office              Office?              @relation(fields: [officeId], references: [id])
+  division            Division?            @relation(fields: [divisionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  office              Office?              @relation(fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   officeId            String?
   divisionId          String?
 
@@ -115,7 +116,7 @@ model InvestigationStage {
   id              Int           @id @default(autoincrement())
   stageName       String
   investigationId Int
-  investigation   Investigation @relation(fields: [investigationId], references: [id])
+  investigation   Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   officers        User[]
   actions         Action[]
 
@@ -124,7 +125,7 @@ model InvestigationStage {
 
 model Action {
   id                   Int                 @id @default(autoincrement())
-  investigationStage   InvestigationStage? @relation(fields: [investigationStageId], references: [id])
+  investigationStage   InvestigationStage? @relation(fields: [investigationStageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   investigationStageId Int?
   name                 String
   description          String?

@@ -18,7 +18,7 @@ Table User {
   assignedWork InvestigationStage [not null]
   division Division
   divisionId String
-  instiution Institution
+  institution Institution
   institutionId String
 }
 
@@ -26,8 +26,8 @@ Table Complaint {
   id Int [pk, increment]
   complaint_title String
   complaint_description String
-  complainerId String [not null]
-  complainer PublicUser [not null]
+  complainerId String
+  complainer PublicUser
   assignedInstitutionId String
   assignedInstitution Institution
   investigation Investigation
@@ -46,6 +46,7 @@ Table Institution {
 Table Division {
   id String [pk]
   name String [not null]
+  instiutionId String [not null]
   institution Institution [not null]
   users User [not null]
   offices Office [not null]
@@ -75,8 +76,8 @@ Table Investigation {
   workflowId Int [not null]
   workflow Workflow [not null]
   institution Institution [not null]
-  complaintId Int [unique, not null]
-  complaint Complaint [not null]
+  complaintId Int [unique]
+  complaint Complaint
   investigationStages InvestigationStage [not null]
   division Division
   office Office
@@ -101,30 +102,30 @@ Table Action {
   description String
 }
 
-Ref: User.officeId > Office.id [delete: No Action]
+Ref: User.officeId > Office.id [delete: Set Null]
 
-Ref: User.divisionId > Division.id
+Ref: User.divisionId > Division.id [delete: Set Null]
 
-Ref: User.institutionId > Institution.id
+Ref: User.institutionId > Institution.id [delete: Set Null]
 
-Ref: Complaint.complainerId > PublicUser.id
+Ref: Complaint.complainerId > PublicUser.id [delete: Set Null]
 
-Ref: Complaint.assignedInstitutionId > Institution.id
+Ref: Complaint.assignedInstitutionId > Institution.id [delete: Set Null]
 
-Ref: Division.id > Institution.id
+Ref: Division.instiutionId > Institution.id [delete: Cascade]
 
-Ref: Office.divisionId > Division.id
+Ref: Office.divisionId > Division.id [delete: Cascade]
 
 Ref: Workflow.institutionId > Institution.id
 
-Ref: Investigation.workflowId > Workflow.id
+Ref: Investigation.workflowId > Workflow.id [delete: Cascade]
 
-Ref: Investigation.complaintId - Complaint.id
+Ref: Investigation.complaintId - Complaint.id [delete: Set Null]
 
-Ref: Investigation.divisionId > Division.id
+Ref: Investigation.divisionId > Division.id [delete: Set Null]
 
-Ref: Investigation.officeId > Office.id
+Ref: Investigation.officeId > Office.id [delete: Set Null]
 
-Ref: InvestigationStage.investigationId > Investigation.id
+Ref: InvestigationStage.investigationId > Investigation.id [delete: Cascade]
 
-Ref: Action.investigationStageId > InvestigationStage.id
+Ref: Action.investigationStageId > InvestigationStage.id [delete: Cascade]
