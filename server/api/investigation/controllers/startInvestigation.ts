@@ -44,7 +44,7 @@ export default async function startInvestigation(
           id: institutionId
         }
       },
-      complaintId: complaintId
+      complaintId: complaintId,
     }
   })
 
