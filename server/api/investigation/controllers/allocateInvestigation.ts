@@ -20,21 +20,19 @@ export async function allocateInvestigationToInstitutions(
   institutionIds: string[]
 ): Promise<Investigation> {
   try {
-    await prisma.$transaction(async (prisma) => {
-      await Promise.all(
-        institutionIds.map(async (institutionId) => {
-          const investigation = await prisma.investigation.update({
-            where: { id: investigationId },
-            data: { institution: { connect: { id: institutionId } } }
-          })
-          if (!investigation) {
-            handleTransactionError(
-              `Error allocating Institution Id: ${institutionId} to Investigation Id: ${investigationId}`
-            )
-          }
+    await Promise.all(
+      institutionIds.map(async (institutionId) => {
+        const investigation = await prisma.investigation.update({
+          where: { id: investigationId },
+          data: { institution: { connect: { id: institutionId } } }
         })
-      )
-    })
+        if (!investigation) {
+          handleTransactionError(
+            `Error allocating Institution Id: ${institutionId} to Investigation Id: ${investigationId}`
+          )
+        }
+      })
+    )
 
     const updatedInvestigation = await fetchUpdatedInvestigation(
       investigationId
@@ -62,20 +60,18 @@ export async function allocateInvestigationToDivision(
   divisionId: string
 ): Promise<Investigation> {
   try {
-    await prisma.$transaction(async (prisma) => {
-      const investigation = await prisma.investigation.update({
-        where: { id: investigationId },
-        data: {
-          divisionId: divisionId,
-          division: { connect: { id: divisionId } } as any
-        }
-      })
-      if (!investigation) {
-        handleTransactionError(
-          `There was an error allocating division with ${divisionId} to the investigation with ${investigationId}, the operation did not proceed`
-        )
+    const investigation = await prisma.investigation.update({
+      where: { id: investigationId },
+      data: {
+        //divisionId: divisionId,
+        division: { connect: { id: divisionId } } as any
       }
     })
+    if (!investigation) {
+      handleTransactionError(
+        `There was an error allocating division with ${divisionId} to the investigation with ${investigationId}, the operation did not proceed`
+      )
+    }
 
     const updatedInvestigation = await fetchUpdatedInvestigation(
       investigationId
@@ -102,20 +98,18 @@ export async function allocateInvestigationToOffice(
   officeId: string
 ): Promise<Investigation> {
   try {
-    await prisma.$transaction(async (prisma) => {
-      const investigation = await prisma.investigation.update({
-        where: { id: investigationId },
-        data: {
-          officeId: officeId,
-          office: { connect: { id: officeId } } as any
-        }
-      })
-      if (!investigation) {
-        handleTransactionError(
-          `There was an error allocating office with ${officeId} to the investigation with ${investigationId}, the operation did not proceed`
-        )
+    const investigation = await prisma.investigation.update({
+      where: { id: investigationId },
+      data: {
+        //officeId: officeId,
+        office: { connect: { id: officeId } } as any
       }
     })
+    if (!investigation) {
+      handleTransactionError(
+        `There was an error allocating office with ${officeId} to the investigation with ${investigationId}, the operation did not proceed`
+      )
+    }
 
     const updatedInvestigation = await fetchUpdatedInvestigation(
       investigationId
@@ -145,45 +139,33 @@ export default async function allocateInvestigation(
   officeId: string
 ): Promise<Investigation> {
   try {
-    await prisma.$transaction(async (prisma) => {
-      await Promise.all(
-        institutionIds.map(async (institutionId) => {
-          const instituteUpdateResult = await prisma.investigation.update({
-            where: { id: investigationId },
-            data: { institution: { connect: { id: institutionId } } }
-          })
-          if (!instituteUpdateResult) {
-            handleTransactionError(
-              `Error allocating Institution Id: ${institutionId} to Investigation Id: ${investigationId}`
-            )
-          }
+    await Promise.all(
+      institutionIds.map(async (institutionId) => {
+        const instituteUpdateResult = await prisma.investigation.update({
+          where: { id: investigationId },
+          data: { institution: { connect: { id: institutionId } } }
         })
-      )
-
-      const divisionUpdateResult = await prisma.investigation.update({
-        where: { id: investigationId },
-        data: {
-          divisionId: divisionId,
-          division: { connect: { id: divisionId } } as any
+        if (!instituteUpdateResult) {
+          handleTransactionError(
+            `Error allocating Institution Id: ${institutionId} to Investigation Id: ${investigationId}`
+          )
         }
       })
-      if (!divisionUpdateResult) {
-        handleTransactionError(
-          `There was an error allocating division with ${divisionId} to the investigation with ${investigationId}, the operation did not proceed`
-        )
+    )
+
+    await prisma.investigation.update({
+      where: { id: investigationId },
+      data: {
+        //divisionId: divisionId,
+        division: { connect: { id: divisionId } } as any
       }
+    })
 
-      const officeUpdateResult = await prisma.investigation.update({
-        where: { id: investigationId },
-        data: {
-          officeId: officeId,
-          office: { connect: { id: officeId } } as any
-        }
-      })
-      if (!officeUpdateResult) {
-        handleTransactionError(
-          `There was an error allocating office with ${officeId} to the investigation with ${investigationId}, the operation did not proceed`
-        )
+    await prisma.investigation.update({
+      where: { id: investigationId },
+      data: {
+        //officeId: officeId,
+        office: { connect: { id: officeId } } as any
       }
     })
 

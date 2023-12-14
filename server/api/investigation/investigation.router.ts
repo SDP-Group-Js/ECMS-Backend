@@ -2,6 +2,11 @@ import express, { Request, Response, Router } from "express"
 import { allocateInvestigation, startInvestigation } from "./controllers"
 import viewInvestigations from "./controllers/viewInvestigations"
 import viewInvestigation from "./controllers/viewInvestigation"
+import {
+  allocateInvestigationToDivision,
+  allocateInvestigationToInstitutions,
+  allocateInvestigationToOffice
+} from "./controllers/allocateInvestigation"
 
 interface InvestigationToCreate {
   institutionId: string
@@ -11,6 +16,18 @@ interface InvestigationToCreate {
 interface InvestigationToAllocate {
   institutionIds: string[]
   divisionId: string
+  officeId: string
+}
+
+interface InvestigationToAllocateToInstitutions {
+  institutionIds: string[]
+}
+
+interface InvestigationToAllocateToDivision {
+  divisionId: string
+}
+
+interface InvestigationToAllocateToOffice {
   officeId: string
 }
 
@@ -48,6 +65,45 @@ investigationRouter.patch(
       investigationId,
       institutionIds,
       divisionId,
+      officeId
+    )
+    return res.status(200).json(investigation)
+  }
+)
+
+investigationRouter.patch(
+  "/:id/allocate-to-institutions",
+  async (req: Request, res: Response) => {
+    const investigationId = parseInt(req.params.id)
+    const { institutionIds }: InvestigationToAllocateToInstitutions = req.body
+    const investigation = await allocateInvestigationToInstitutions(
+      investigationId,
+      institutionIds
+    )
+    return res.status(200).json(investigation)
+  }
+)
+
+investigationRouter.patch(
+  "/:id/allocate-to-division",
+  async (req: Request, res: Response) => {
+    const investigationId = parseInt(req.params.id)
+    const { divisionId }: InvestigationToAllocateToDivision = req.body
+    const investigation = await allocateInvestigationToDivision(
+      investigationId,
+      divisionId
+    )
+    return res.status(200).json(investigation)
+  }
+)
+
+investigationRouter.patch(
+  "/:id/allocate-to-office",
+  async (req: Request, res: Response) => {
+    const investigationId = parseInt(req.params.id)
+    const { officeId }: InvestigationToAllocateToOffice = req.body
+    const investigation = await allocateInvestigationToOffice(
+      investigationId,
       officeId
     )
     return res.status(200).json(investigation)
