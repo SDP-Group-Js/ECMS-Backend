@@ -18,7 +18,7 @@ Table User {
   assignedWork InvestigationStage [not null]
   division Division
   divisionId String
-  instiution Institution
+  institution Institution
   institutionId String
 }
 
@@ -46,6 +46,7 @@ Table Institution {
 Table Division {
   id String [pk]
   name String [not null]
+  instiutionId String [not null]
   institution Institution [not null]
   users User [not null]
   offices Office [not null]
@@ -111,7 +112,7 @@ Ref: Complaint.complainerId > PublicUser.id [delete: Set Null]
 
 Ref: Complaint.assignedInstitutionId > Institution.id [delete: Set Null]
 
-Ref: Division.id > Institution.id [delete: Cascade]
+Ref: Division.instiutionId > Institution.id [delete: Cascade]
 
 Ref: Office.divisionId > Division.id [delete: Cascade]
 
