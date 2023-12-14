@@ -27,20 +27,6 @@ export default async function startInvestigation(
       if (!institutionId) throw new Error(`Institution Id cannot be Empty`)
       if (!complaintId) throw new Error(`Complaint Id cannot be Empty`)
 
-      //Check if the institution already exists
-      const institution = await prisma.institution.findUnique({
-        where: { id: institutionId }
-      })
-      if (!institution)
-        throw new Error(`Institution with id ${institutionId} not found`)
-
-      //Check if the complaint already exists
-      const complaint = await prisma.complaint.findUnique({
-        where: { id: complaintId }
-      })
-      if (!complaint)
-        throw new Error(`Complaint with id ${complaintId} not found`)
-
       //Check if the investigation already exists
       const existingInvestigation = await prisma.investigation.findUnique({
         where: { complaintId: complaintId }
@@ -97,6 +83,13 @@ export default async function startInvestigation(
       return investigation
     })
   } catch (error: any) {
-    throw new Error(`Transaction failed: ${error.message}`)
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        console.log(
+          "There is a unique constraint violation, a new investigation cannot be created with this email"
+        )
+      }
+    }
+    throw error
   }
 }
