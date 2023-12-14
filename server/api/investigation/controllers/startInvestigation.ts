@@ -2,7 +2,8 @@ import {
   Prisma,
   PrismaClient,
   Institution,
-  Investigation
+  Investigation,
+  Complaint
 } from "@prisma/client"
 
 const prisma = new PrismaClient()
@@ -33,7 +34,11 @@ export default async function startInvestigation(
   })
   if (!complaint) throw new Error(`Complaint with id ${complaintId} not found`)
 
-  console.log(institutionId, complaintId)
+  //Check if the investigation already exists
+  const existingInvestigation = await prisma.investigation.findUnique({
+    where: { complaintId: complaintId }
+  })
+  if (existingInvestigation) throw new Error(`Investigation already exists`)
 
   //Create Investigation
   const investigation: Investigation = await prisma.investigation.create({
@@ -44,9 +49,43 @@ export default async function startInvestigation(
           id: institutionId
         }
       },
-      complaintId: complaintId,
+      complaintId: complaintId
     }
   })
+  if (!investigation) throw new Error(`Investigation not created`)
+
+  //Get the Id of the new investigation
+  const investigationId: number = investigation.id
+
+  //Update Complaint
+  const updatedComplaint: Complaint = await prisma.complaint.update({
+    where: {
+      id: complaintId
+    },
+    data: {
+      investigation: {
+        connect: {
+          id: investigationId
+        }
+      }
+    }
+  })
+  if (!updatedComplaint) throw new Error(`Complaint not updated`)
+
+  //Update Institution
+  const updatedInstitution: Institution = await prisma.institution.update({
+    where: {
+      id: institutionId
+    },
+    data: {
+      investigations: {
+        connect: {
+          id: investigationId
+        }
+      }
+    }
+  })
+  if (!updatedInstitution) throw new Error(`Institution not updated`)
 
   return investigation
 }

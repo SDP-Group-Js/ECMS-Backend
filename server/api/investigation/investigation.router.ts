@@ -26,7 +26,7 @@ investigationRouter
   })
 
 investigationRouter.route("/:id").get(async (req: Request, res: Response) => {
-  const investigationId = req.params.id
+  const investigationId = parseInt(req.params.id)
   const investigation = await viewInvestigation(investigationId)
   return res.json(investigation)
 })
