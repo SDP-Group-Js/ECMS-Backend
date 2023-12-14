@@ -2,6 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 datasource db {
   provider     = "mysql"
   url          = env("DATABASE_URL")
@@ -16,24 +20,20 @@ model PublicUser {
   complaints Complaint[]
 }
 
-model Admin {
-  id   String @id
-  name String
-}
-
-model SysUser {
-  id String @id
-}
-
-model Officer {
-  id           String                       @id
-  name         String
-  officeId     String?
-  office       Office?                    @relation(fields: [officeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  level        Int
-  assignedWork InvestigationWorkflowStage[]
+model User {
+  id            String               @id
+  name          String
+  officeId      String?
+  office        Office?              @relation(fields: [officeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  assignedWork  InvestigationStage[]
+  division      Division?            @relation(fields: [divisionId], references: [id])
+  divisionId    String?
+  instiution    Institution?         @relation(fields: [institutionId], references: [id])
+  institutionId String?
 
   @@index([officeId])
+  @@index([institutionId])
+  @@index([divisionId])
 }
 
 model Complaint {
@@ -43,7 +43,7 @@ model Complaint {
   complainerId          String
   complainer            PublicUser     @relation(fields: [complainerId], references: [id])
   assignedInstitutionId String?
-  assignedInstitution   Institution?    @relation(fields: [assignedInstitutionId], references: [id])
+  assignedInstitution   Institution?   @relation(fields: [assignedInstitutionId], references: [id])
   investigation         Investigation?
 
   @@index([complainerId])
@@ -55,82 +55,79 @@ model Institution {
   name           String
   complaints     Complaint[]
   investigations Investigation[]
+  users          User[]
   workflows      Workflow[]
   divisions      Division[]      @relation("DivisionToParent")
 }
 
 model Division {
-  id               String      @id @default(uuid())
-  name             String
-  workflows        Workflow[]
-  institution      Institution @relation("DivisionToParent", fields: [id], references: [id])
-  parentDivisionId String
-  parentDivision   Division    @relation(name: "SubDivisions", fields: [parentDivisionId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  subdivisons      Division[]  @relation(name: "SubDivisions")
-  offices          Office[]
+  id            String          @id @default(uuid())
+  name          String
+  institution   Institution     @relation("DivisionToParent", fields: [id], references: [id])
+  users         User[]
+  offices       Office[]
+  investigation Investigation[]
 
   @@index([id])
-  @@index([parentDivisionId])
 }
 
 model Office {
   id             String          @id @default(uuid())
   name           String
   investigations Investigation[]
-  workflows      Workflow[]
   division       Division?       @relation(fields: [divisionId], references: [id])
   divisionId     String?
-  officers       Officer[]
+  officers       User[]
 
   @@index([divisionId])
 }
 
 model Workflow {
-  id                     Int                     @id @default(autoincrement())
-  institutionId          String?
-  institution            Institution?             @relation(fields: [institutionId], references: [id])
-  stages                 Json?
-  investigationWorkflows InvestigationWorkflow[]
-  division               Division?               @relation(fields: [divisionId], references: [id])
-  divisionId             String?
-  office                 Office?                 @relation(fields: [officeId], references: [id])
-  officeId               String?
+  id            Int             @id @default(autoincrement())
+  institutionId String?
+  institution   Institution?    @relation(fields: [institutionId], references: [id])
+  stages        Json?
+  investigation Investigation[]
 
   @@index([institutionId])
-  @@index([divisionId])
-  @@index([officeId])
 }
 
 model Investigation {
-  id                     Int                    @id @default(autoincrement())
-  institutionId          String
-  institution            Institution[]
-  complaintId            Int                    @unique
-  complaint              Complaint              @relation(fields: [complaintId], references: [id])
-  investigationWorkflow  InvestigationWorkflow?
-  office                 Office?                @relation(fields: [officeId], references: [id])
-  officeId               String?
+  id                  Int                  @id @default(autoincrement())
+  institutionId       String
+  workflowId          Int
+  workflow            Workflow             @relation(fields: [workflowId], references: [id])
+  institution         Institution[]
+  complaintId         Int                  @unique
+  complaint           Complaint            @relation(fields: [complaintId], references: [id])
+  investigationStages InvestigationStage[]
+  division            Division?            @relation(fields: [divisionId], references: [id])
+  office              Office?              @relation(fields: [officeId], references: [id])
+  officeId            String?
+  divisionId          String?
 
   @@index([officeId])
+  @@index([divisionId])
+  @@index([workflowId])
 }
 
-model InvestigationWorkflow {
-  id                    Int                          @id @default(autoincrement())
-  institutionWorkflowId Int
-  institutionWorkflow   Workflow                     @relation(fields: [institutionWorkflowId], references: [id])
-  investigationId       Int                          @unique
-  investigation         Investigation                @relation(fields: [investigationId], references: [id])
-  stages                InvestigationWorkflowStage[]
+model InvestigationStage {
+  id              Int           @id @default(autoincrement())
+  stageName       String
+  investigationId Int
+  investigation   Investigation @relation(fields: [investigationId], references: [id])
+  officers        User[]
+  actions         Action[]
 
-  @@index([institutionWorkflowId])
+  @@index([investigationId])
 }
 
-model InvestigationWorkflowStage {
-  id                      Int                   @id @default(autoincrement())
-  stageName               String
-  investigationWorkflowId Int
-  investigationWorkflow   InvestigationWorkflow @relation(fields: [investigationWorkflowId], references: [id])
-  officers                Officer[]
+model Action {
+  id                   Int                 @id @default(autoincrement())
+  investigationStage   InvestigationStage? @relation(fields: [investigationStageId], references: [id])
+  investigationStageId Int?
+  name                 String
+  description          String?
 
-  @@index([investigationWorkflowId])
+  @@index([investigationStageId])
 }
