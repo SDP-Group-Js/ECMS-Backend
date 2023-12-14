@@ -2,67 +2,208 @@ import { Investigation, Prisma, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-export default async function allocateInvestigation(
+const fetchUpdatedInvestigation = async (
+  investigationId: number
+): Promise<Investigation | null> => {
+  return prisma.investigation.findUnique({
+    where: { id: investigationId }
+  })
+}
+
+const handleTransactionError = (message: string) => {
+  console.error(message)
+  throw new Error(message)
+}
+
+export async function allocateInvestigationToInstitutions(
   investigationId: number,
   institutionIds: string[]
 ): Promise<Investigation> {
-  // Check for null errors
-  if (!investigationId) throw new Error("Investigation Id cannot be empty")
-  if (!institutionIds || institutionIds.length === 0)
-    throw new Error("List of Institution Ids cannot be empty")
-
-  // Check if the investigation is available in the database
-  const existingInvestigation = await prisma.investigation.findUnique({
-    where: { id: investigationId }
-  })
-  if (!existingInvestigation)
-    throw new Error(`Investigation with Id ${investigationId} not found`)
-
-  // Check if all the institution Ids are corresponding institutions available in the database
-  const existingInstitutions = await prisma.institution.findMany({
-    where: { id: { in: institutionIds } }
-  })
-  if (existingInstitutions.length !== institutionIds.length)
-    throw new Error(
-      `Some of the Institution Ids are not corresponding to institutions`
-    )
-
-  // Allocate the investigation to the institutions and vice versa
-  await prisma.$transaction(async (prisma) => {
-    await Promise.all(
-      institutionIds.map(async (institutionId) => {
-        await updateInvestigationAndInstitution(investigationId, institutionId)
-      })
-    )
-  })
-
-  const updatedInvestigation = await prisma.investigation.findUnique({
-    where: { id: investigationId }
-  })
-  if (!updatedInvestigation)
-    throw new Error("Error fetching the updated investigation")
-
-  return updatedInvestigation
-}
-async function updateInvestigationAndInstitution(
-  investigationId: number,
-  institutionId: string
-) {
-  await prisma.$transaction(async (prisma) => {
-    const updatedInvestigation = await prisma.investigation.update({
-      where: { id: investigationId },
-      data: { institution: { connect: { id: institutionId } } }
+  try {
+    await prisma.$transaction(async (prisma) => {
+      await Promise.all(
+        institutionIds.map(async (institutionId) => {
+          const investigation = await prisma.investigation.update({
+            where: { id: investigationId },
+            data: { institution: { connect: { id: institutionId } } }
+          })
+          if (!investigation) {
+            handleTransactionError(
+              `Error allocating Institution Id: ${institutionId} to Investigation Id: ${investigationId}`
+            )
+          }
+        })
+      )
     })
 
-    const updatedInstitution = await prisma.institution.update({
-      where: { id: institutionId },
-      data: { investigations: { connect: { id: investigationId } } }
-    })
+    const updatedInvestigation = await fetchUpdatedInvestigation(
+      investigationId
+    )
+    if (!updatedInvestigation) {
+      handleTransactionError("Error fetching the updated investigation")
+    }
 
-    if (!updatedInvestigation || !updatedInstitution) {
-      throw new Error(
-        `Failed to update records for Investigation Id ${investigationId} and Institution Id ${institutionId}`
+    return updatedInvestigation as Investigation
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      console.log(
+        "There is a unique constraint violation, a new investigation cannot be created with this email"
       )
     }
-  })
+    throw error
+  }
+}
+
+export async function allocateInvestigationToDivision(
+  investigationId: number,
+  divisionId: string
+): Promise<Investigation> {
+  try {
+    await prisma.$transaction(async (prisma) => {
+      const investigation = await prisma.investigation.update({
+        where: { id: investigationId },
+        data: {
+          divisionId: divisionId,
+          division: { connect: { id: divisionId } } as any
+        }
+      })
+      if (!investigation) {
+        handleTransactionError(
+          `There was an error allocating division with ${divisionId} to the investigation with ${investigationId}, the operation did not proceed`
+        )
+      }
+    })
+
+    const updatedInvestigation = await fetchUpdatedInvestigation(
+      investigationId
+    )
+    if (!updatedInvestigation) {
+      handleTransactionError("Error fetching the updated investigation")
+    }
+    return updatedInvestigation as Investigation
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      console.log(
+        "There is a unique constraint violation, a new investigation cannot be created with this email"
+      )
+    }
+    throw error
+  }
+}
+
+export async function allocateInvestigationToOffice(
+  investigationId: number,
+  officeId: string
+): Promise<Investigation> {
+  try {
+    await prisma.$transaction(async (prisma) => {
+      const investigation = await prisma.investigation.update({
+        where: { id: investigationId },
+        data: {
+          officeId: officeId,
+          office: { connect: { id: officeId } } as any
+        }
+      })
+      if (!investigation) {
+        handleTransactionError(
+          `There was an error allocating office with ${officeId} to the investigation with ${investigationId}, the operation did not proceed`
+        )
+      }
+    })
+
+    const updatedInvestigation = await fetchUpdatedInvestigation(
+      investigationId
+    )
+    if (!updatedInvestigation) {
+      handleTransactionError("Error fetching the updated investigation")
+    }
+
+    return updatedInvestigation as Investigation
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      console.log(
+        "There is a unique constraint violation, a new investigation cannot be created with this email"
+      )
+    }
+    throw error
+  }
+}
+
+export default async function allocateInvestigation(
+  investigationId: number,
+  institutionIds: string[],
+  divisionId: string,
+  officeId: string
+): Promise<Investigation> {
+  try {
+    await prisma.$transaction(async (prisma) => {
+      await Promise.all(
+        institutionIds.map(async (institutionId) => {
+          const instituteUpdateResult = await prisma.investigation.update({
+            where: { id: investigationId },
+            data: { institution: { connect: { id: institutionId } } }
+          })
+          if (!instituteUpdateResult) {
+            handleTransactionError(
+              `Error allocating Institution Id: ${institutionId} to Investigation Id: ${investigationId}`
+            )
+          }
+        })
+      )
+
+      const divisionUpdateResult = await prisma.investigation.update({
+        where: { id: investigationId },
+        data: {
+          divisionId: divisionId,
+          division: { connect: { id: divisionId } } as any
+        }
+      })
+      if (!divisionUpdateResult) {
+        handleTransactionError(
+          `There was an error allocating division with ${divisionId} to the investigation with ${investigationId}, the operation did not proceed`
+        )
+      }
+
+      const officeUpdateResult = await prisma.investigation.update({
+        where: { id: investigationId },
+        data: {
+          officeId: officeId,
+          office: { connect: { id: officeId } } as any
+        }
+      })
+      if (!officeUpdateResult) {
+        handleTransactionError(
+          `There was an error allocating office with ${officeId} to the investigation with ${investigationId}, the operation did not proceed`
+        )
+      }
+    })
+
+    const updatedInvestigation = await fetchUpdatedInvestigation(
+      investigationId
+    )
+    if (!updatedInvestigation) {
+      handleTransactionError("Error fetching the updated investigation")
+    }
+
+    return updatedInvestigation as Investigation
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      console.log(
+        "There is a unique constraint violation, a new investigation cannot be created with this email"
+      )
+    }
+    throw error
+  }
 }
