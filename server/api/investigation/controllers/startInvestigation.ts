@@ -35,6 +35,7 @@ export default async function startInvestigation(
         }
       })
       if (!investigation) throw new Error(`Investigation not created`)
+
       return investigation
     })
   } catch (error: any) {
