@@ -23,10 +23,6 @@ export default async function startInvestigation(
 ): Promise<Investigation> {
   try {
     return await prisma.$transaction(async (prisma) => {
-      //Check for null errors
-      if (!institutionId) throw new Error(`Institution Id cannot be Empty`)
-      if (!complaintId) throw new Error(`Complaint Id cannot be Empty`)
-
       //Check if the investigation already exists
       const existingInvestigation = await prisma.investigation.findUnique({
         where: { complaintId: complaintId }
