@@ -73,8 +73,8 @@ Table Workflow {
 Table Investigation {
   id Int [pk, increment]
   institutionId String [not null]
-  workflowId Int [not null]
-  workflow Workflow [not null]
+  workflowId Int
+  workflow Workflow
   institution Institution [not null]
   complaintId Int [unique]
   complaint Complaint
