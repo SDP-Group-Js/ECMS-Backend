@@ -1,4 +1,4 @@
-import allocateInvestigation from "./allocateInvestigation";
-import startInvestigation from "./startInvestigation";
+import allocateInvestigation from "./allocateInvestigation"
+import startInvestigation from "./startInvestigation"
 
-export {allocateInvestigation, startInvestigation}
+export { allocateInvestigation, startInvestigation }
