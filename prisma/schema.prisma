@@ -29,8 +29,9 @@ model User {
   institutionId String?
   institution   Institution? @relation(fields: [institutionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
-  actions   Action[]
-  userRoles UserRole[]
+  actions              Action[]
+  userRoles            UserRole[]
+  InvestigationStage   InvestigationStage[]
 
   @@index([officeId])
   @@index([institutionId])
@@ -75,19 +76,20 @@ model Office {
   description String?
   type        OfficeType
 
-  instiutionId String
-  institution  Institution @relation(fields: [instiutionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  institutionId String
+  institution   Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   users                  User[]
   assignedInvestigations Investigation[] @relation(name: "AssignedInvestigation")
   involvedInvestigations Investigation[] @relation(name: "InvolvedInvestigation")
   workflows              Workflow[]
 
-  offices  Office[] @relation(name: "Offices")
-  office   Office?  @relation(name: "Offices", fields: [officeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  officeId String?
+  offices            Office[]             @relation(name: "Offices")
+  office             Office?              @relation(name: "Offices", fields: [officeId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  officeId           String?
+  InvestigationStage InvestigationStage[]
 
-  @@index([instiutionId])
+  @@index([institutionId])
   @@index([officeId])
 }
 
@@ -128,7 +130,7 @@ model Investigation {
   officeId              String?
   office                Office?     @relation(name: "AssignedInvestigation", fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   institutionWorkflowId Int?
-  institutionWorkflow   Workflow?   @relation(fields: [institutionWorkflowId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  institutionWorkflow   Workflow?   @relation(fields: [institutionWorkflowId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
   investigationStages InvestigationStage[]
   involvedParties     Office[]             @relation(name: "InvolvedInvestigation")
@@ -145,29 +147,35 @@ enum InvestigationStatus {
 }
 
 model InvestigationStage {
-  id          Int     @id @default(autoincrement())
-  stageName   String
-  description String?
-  order       Int
-  tasks       Json?
+  id                  Int     @id @default(autoincrement())
+  stageName           String
+  description         String?
+  conclusion          String?
+  order               Int
+  tasks               Json?
+  responsibleOfficeId String?
+  responsibleOffice   Office? @relation(fields: [responsibleOfficeId], references: [id])
+  assignedOfficers    User[]
 
   investigationId Int
   investigation   Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  actions Action[]
-  status  String   @default("Pending")
+  actions  Action[]
+  status   String   @default("Ongoing")
+  officeId String?
 
   @@index([investigationId])
+  @@index([responsibleOfficeId])
 }
 
 model Action {
-  id                   Int                 @id @default(autoincrement())
-  investigationStage   InvestigationStage? @relation(fields: [investigationStageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  investigationStageId Int?
+  id                   Int                @id @default(autoincrement())
+  investigationStage   InvestigationStage @relation(fields: [investigationStageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  investigationStageId Int
   name                 String
   description          String?
-  user                 User                @relation(fields: [userId], references: [id])
-  userId               String              @unique
+  user                 User?              @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  userId               String?            @unique
 
   @@index([investigationStageId])
 }
