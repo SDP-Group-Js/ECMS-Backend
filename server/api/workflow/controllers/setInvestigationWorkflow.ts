@@ -27,7 +27,23 @@ export default async function setInvestigationWorkflow(
             id: institutionWorkflowId
           }
         },
-        workflow: workflow
+        workflow: workflow,
+        investigationStages: {
+          createMany: {
+            data: [
+              ...workflow.map((stage, index) => {
+                return { stageName: stage, order: index + 1 }
+              })
+            ]
+          },
+        }
+      },
+      include: {
+        investigationStages: {
+          orderBy: {
+            order: 'asc'
+          }
+        }
       }
     })
 
