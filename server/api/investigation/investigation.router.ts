@@ -1,10 +1,11 @@
 import express, { Request, Response, Router } from "express"
-import { startInvestigation } from "./controllers"
+//import { startInvestigation } from "./controllers"
 import viewInvestigations from "./controllers/viewInvestigations"
 import viewInvestigation from "./controllers/viewInvestigation"
+import { startInvestigation } from "./controllers"
 
 interface Investigation {
-  institutionId: string
+  investigationDescription: string
   complaintId: number
 }
 
@@ -17,9 +18,9 @@ investigationRouter
     return res.json(investigations)
   })
   .post(async (req: Request, res: Response) => {
-    const { institutionId, complaintId }: Investigation = req.body
+    const { investigationDescription, complaintId }: Investigation = req.body
     const newInvestigation = await startInvestigation(
-      institutionId,
+      investigationDescription,
       complaintId
     )
     return res.json(newInvestigation)
