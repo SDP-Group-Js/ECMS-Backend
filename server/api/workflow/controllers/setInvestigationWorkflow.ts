@@ -19,7 +19,7 @@ export default async function setInvestigationWorkflow(
   try {
     const updatedInvestigation = await prisma.investigation.update({
       where: {
-        id: investigationId,
+        id: investigationId
       },
       data: {
         institutionWorkflow: {
@@ -30,6 +30,8 @@ export default async function setInvestigationWorkflow(
         workflow: workflow
       }
     })
+
+    return updatedInvestigation
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
