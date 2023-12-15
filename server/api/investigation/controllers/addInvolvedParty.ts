@@ -2,14 +2,14 @@ import { Investigation, Prisma, PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-export default async function allocateInvestigation(
+export default async function addInvolvedParty(
   investigationId: number,
   officeId: string
 ) {
   try {
     const investigation: Investigation = await prisma.investigation.update({
       where: { id: investigationId },
-      data: { office: { connect: { id: officeId } } }
+      data: { involvedParties: { connect: { id: officeId } } }
     })
     if (!investigation)
       throw new Error(`Investigation with ID ${investigationId} not found`)
