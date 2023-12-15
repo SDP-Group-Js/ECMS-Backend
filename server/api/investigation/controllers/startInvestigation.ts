@@ -4,12 +4,14 @@ const prisma = new PrismaClient()
 
 export default async function startInvestigation(
   investigationDescription: string,
-  complaintId: number
+  complaintId: number,
+  institutionId: string
 ): Promise<Investigation> {
   try {
     const investigation: Investigation = await prisma.investigation.create({
       data: {
         description: investigationDescription,
+        institution: { connect: { id: institutionId } },
         complaint: { connect: { id: complaintId } }
       }
     })

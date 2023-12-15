@@ -7,6 +7,7 @@ import { startInvestigation } from "./controllers"
 interface Investigation {
   investigationDescription: string
   complaintId: number
+  institutionId: string
 }
 
 const investigationRouter: Router = express.Router()
@@ -18,10 +19,15 @@ investigationRouter
     return res.json(investigations)
   })
   .post(async (req: Request, res: Response) => {
-    const { investigationDescription, complaintId }: Investigation = req.body
+    const {
+      investigationDescription,
+      complaintId,
+      institutionId
+    }: Investigation = req.body
     const newInvestigation = await startInvestigation(
       investigationDescription,
-      complaintId
+      complaintId,
+      institutionId
     )
     return res.json(newInvestigation)
   })
