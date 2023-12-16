@@ -27,7 +27,6 @@ export default async function setInvestigationWorkflow(
             id: institutionWorkflowId
           }
         },
-        workflow: workflow,
         investigationStages: {
           createMany: {
             data: [

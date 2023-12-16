@@ -120,7 +120,6 @@ model Investigation {
   id          Int                 @id @default(autoincrement())
   status      InvestigationStatus @default(NotAssigned)
   description String?
-  workflow    Json?
 
   complaintId Int?       @unique
   complaint   Complaint? @relation(fields: [complaintId], references: [id], onDelete: SetNull, onUpdate: Cascade)
