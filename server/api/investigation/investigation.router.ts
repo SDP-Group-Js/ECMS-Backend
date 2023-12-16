@@ -41,15 +41,22 @@ investigationRouter
     return res.json(newInvestigation)
   })
 
-investigationRouter.route("/:id").patch(async (req: Request, res: Response) => {
-  const investigationId: number = parseInt(req.params.id)
-  const { officeId }: InvestigationToAllocate = req.body
-  const updatedInvestigation = await allocateInvestigation(
-    investigationId,
-    officeId
-  )
-  return res.json(updatedInvestigation)
-})
+investigationRouter
+  .route("/:id")
+  .get(async (req: Request, res: Response) => {
+    const investigationId: number = parseInt(req.params.id)
+    const investigation = await viewInvestigation(investigationId)
+    return res.json(investigation)
+  })
+  .patch(async (req: Request, res: Response) => {
+    const investigationId: number = parseInt(req.params.id)
+    const { officeId }: InvestigationToAllocate = req.body
+    const updatedInvestigation = await allocateInvestigation(
+      investigationId,
+      officeId
+    )
+    return res.json(updatedInvestigation)
+  })
 
 investigationRouter
   .route("/:id/addInvolvedParties")

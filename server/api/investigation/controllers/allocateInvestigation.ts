@@ -9,7 +9,7 @@ export default async function allocateInvestigation(
   try {
     const investigation: Investigation = await prisma.investigation.update({
       where: { id: investigationId },
-      data: { office: { connect: { id: officeId } } }
+      data: { office: { connect: { id: officeId } }, status: "Ongoing" }
     })
     if (!investigation)
       throw new Error(`Investigation with ID ${investigationId} not found`)

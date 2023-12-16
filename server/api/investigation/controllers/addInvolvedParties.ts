@@ -7,24 +7,13 @@ export default async function addInvolvedParties(
   officeIds: string[]
 ): Promise<boolean> {
   try {
-    await prisma.$transaction(async (prisma) => {
-      const involvedParties = await Promise.all(
-        officeIds.map(async (officeId: string) => {
-          const investigation: Investigation =
-            await prisma.investigation.update({
-              where: { id: investigationId },
-              data: { involvedParties: { connect: { id: officeId } } }
-            })
-          if (!investigation) {
-            throw new Error(
-              `Failed to add involved party with Id: ${officeId}, whole transaction was aborted.`
-            )
-          }
-          return investigation
-        })
-      )
-      if (!involvedParties) return false
+    const investigation: Investigation = await prisma.investigation.update({
+      where: { id: investigationId },
+      data: { involvedParties: { connect: officeIds.map((id) => ({ id })) } }
     })
+    if (!investigation) {
+      throw new Error(`Failed to add involved parties.`)
+    }
     return true
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
