@@ -17,4 +17,3 @@ apiRouter.use("/workflow", workflowRouter)
 apiRouter.use("/user", userRouter)
 
 export default apiRouter
-export { allocateComplaint, reportComplaint, viewComplaints }
