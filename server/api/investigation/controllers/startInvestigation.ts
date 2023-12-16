@@ -11,7 +11,6 @@ export default async function startInvestigation(
     const investigation: Investigation = await prisma.investigation.create({
       data: {
         description: investigationDescription,
-        institution: { connect: { id: institutionId } },
         complaint: { connect: { id: complaintId } }
       }
     })

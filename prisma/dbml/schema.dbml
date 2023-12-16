@@ -19,6 +19,7 @@ Table User {
   institution Institution
   actions Action [not null]
   userRoles UserRole [not null]
+  InvestigationStage InvestigationStage [not null]
 }
 
 Table UserRole {
@@ -42,7 +43,6 @@ Table Institution {
   id String [pk]
   name String [not null]
   complaints Complaint [not null]
-  investigations Investigation [not null]
   users User [not null]
   workflows Workflow [not null]
   offices Office [not null]
@@ -53,7 +53,7 @@ Table Office {
   name String [not null]
   description String
   type OfficeType [not null]
-  instiutionId String [not null]
+  institutionId String [not null]
   institution Institution [not null]
   users User [not null]
   assignedInvestigations Investigation [not null]
@@ -62,6 +62,7 @@ Table Office {
   offices Office [not null]
   office Office
   officeId String
+  InvestigationStage InvestigationStage [not null]
 }
 
 Table Workflow {
@@ -81,10 +82,8 @@ Table Investigation {
   status InvestigationStatus [not null, default: 'NotAssigned']
   description String
   workflow Json
-  complaintId Int [unique]
-  complaint Complaint
-  institutionId String [not null]
-  institution Institution [not null]
+  complaintId Int [unique, not null]
+  complaint Complaint [not null]
   officeId String
   office Office
   institutionWorkflowId Int
@@ -97,22 +96,27 @@ Table InvestigationStage {
   id Int [pk, increment]
   stageName String [not null]
   description String
+  conclusion String
   order Int [not null]
   tasks Json
+  responsibleOfficeId String
+  responsibleOffice Office
+  assignedOfficers User [not null]
   investigationId Int [not null]
   investigation Investigation [not null]
   actions Action [not null]
-  status String [not null, default: 'Pending']
+  status String [not null, default: 'Ongoing']
+  officeId String
 }
 
 Table Action {
   id Int [pk, increment]
-  investigationStage InvestigationStage
-  investigationStageId Int
+  investigationStage InvestigationStage [not null]
+  investigationStageId Int [not null]
   name String [not null]
   description String
-  user User [not null]
-  userId String [unique, not null]
+  user User
+  userId String [unique]
 }
 
 Enum OfficeType {
@@ -135,7 +139,7 @@ Ref: Complaint.complainerId > PublicUser.id [delete: Set Null]
 
 Ref: Complaint.assignedInstitutionId > Institution.id [delete: Set Null]
 
-Ref: Office.instiutionId > Institution.id [delete: Cascade]
+Ref: Office.institutionId > Institution.id [delete: Cascade]
 
 Ref: Office.officeId > Office.id
 
@@ -143,16 +147,16 @@ Ref: Workflow.institutionId > Institution.id
 
 Ref: Workflow.officeId > Office.id
 
-Ref: Investigation.complaintId - Complaint.id [delete: Set Null]
-
-Ref: Investigation.institutionId > Institution.id
+Ref: Investigation.complaintId - Complaint.id [delete: Restrict]
 
 Ref: Investigation.officeId > Office.id [delete: Set Null]
 
-Ref: Investigation.institutionWorkflowId > Workflow.id [delete: Cascade]
+Ref: Investigation.institutionWorkflowId > Workflow.id [delete: Set Null]
+
+Ref: InvestigationStage.responsibleOfficeId > Office.id
 
 Ref: InvestigationStage.investigationId > Investigation.id [delete: Cascade]
 
 Ref: Action.investigationStageId > InvestigationStage.id [delete: Cascade]
 
-Ref: Action.userId > User.id
+Ref: Action.userId > User.id [delete: Set Null]
