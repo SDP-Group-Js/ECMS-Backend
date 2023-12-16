@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 export default async function allocateInvestigation(
   investigationId: number,
   officeId: string
-) {
+): Promise<Investigation> {
   try {
     const investigation: Investigation = await prisma.investigation.update({
       where: { id: investigationId },

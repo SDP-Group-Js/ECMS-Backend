@@ -3,6 +3,7 @@ import express, { Request, Response, Router } from "express"
 import viewInvestigations from "./controllers/viewInvestigations"
 import viewInvestigation from "./controllers/viewInvestigation"
 import { allocateInvestigation, startInvestigation } from "./controllers"
+import addInvolvedParties from "./controllers/addInvolvedParties"
 
 interface Investigation {
   investigationDescription: string
@@ -12,6 +13,10 @@ interface Investigation {
 
 interface InvestigationToAllocate {
   officeId: string
+}
+
+interface InvestigationToAddInterestedParties {
+  officeIds: string[]
 }
 
 const investigationRouter: Router = express.Router()
@@ -37,7 +42,7 @@ investigationRouter
   })
 
 investigationRouter.route("/:id").patch(async (req: Request, res: Response) => {
-  const investigationId = parseInt(req.params.id)
+  const investigationId: number = parseInt(req.params.id)
   const { officeId }: InvestigationToAllocate = req.body
   const updatedInvestigation = await allocateInvestigation(
     investigationId,
@@ -45,5 +50,19 @@ investigationRouter.route("/:id").patch(async (req: Request, res: Response) => {
   )
   return res.json(updatedInvestigation)
 })
+
+investigationRouter
+  .route("/:id/addInvolvedParties")
+  .patch(async (req: Request, res: Response) => {
+    const investigationId: number = parseInt(req.params.id)
+    const { officeIds }: InvestigationToAddInterestedParties = req.body
+    const updatedInvestigation: boolean = await addInvolvedParties(
+      investigationId,
+      officeIds
+    )
+    if (updatedInvestigation)
+      return res.status(200).json({ message: "success" })
+    else return res.status(500).json({ message: "failed" })
+  })
 
 export default investigationRouter
