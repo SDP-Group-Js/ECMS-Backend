@@ -61,13 +61,12 @@ model Complaint {
 }
 
 model Institution {
-  id             String          @id @default(uuid())
-  name           String
-  complaints     Complaint[]
-  investigations Investigation[]
-  users          User[]
-  workflows      Workflow[]
-  offices        Office[]
+  id         String      @id @default(uuid())
+  name       String
+  complaints Complaint[]
+  users      User[]
+  workflows  Workflow[]
+  offices    Office[]
 }
 
 model Office {
@@ -121,22 +120,20 @@ model Investigation {
   status      InvestigationStatus @default(NotAssigned)
   description String?
 
-  complaintId Int?       @unique
-  complaint   Complaint? @relation(fields: [complaintId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  complaintId Int       @unique
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Restrict, onUpdate: Cascade)
 
-  institutionId         String
-  institution           Institution @relation(fields: [institutionId], references: [id])
   officeId              String?
-  office                Office?     @relation(name: "AssignedInvestigation", fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  office                Office?   @relation(name: "AssignedInvestigation", fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   institutionWorkflowId Int?
   institutionWorkflow   Workflow?   @relation(fields: [institutionWorkflowId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
 
   investigationStages InvestigationStage[]
   involvedParties     Office[]             @relation(name: "InvolvedInvestigation")
 
   @@index([officeId])
   @@index([institutionWorkflowId])
-  @@index([institutionId])
 }
 
 enum InvestigationStatus {

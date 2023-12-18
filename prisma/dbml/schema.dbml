@@ -43,7 +43,6 @@ Table Institution {
   id String [pk]
   name String [not null]
   complaints Complaint [not null]
-  investigations Investigation [not null]
   users User [not null]
   workflows Workflow [not null]
   offices Office [not null]
@@ -82,10 +81,12 @@ Table Investigation {
   id Int [pk, increment]
   status InvestigationStatus [not null, default: 'NotAssigned']
   description String
+
   complaintId Int [unique]
   complaint Complaint
   institutionId String [not null]
   institution Institution [not null]
+
   officeId String
   office Office
   institutionWorkflowId Int
@@ -149,9 +150,7 @@ Ref: Workflow.institutionId > Institution.id
 
 Ref: Workflow.officeId > Office.id
 
-Ref: Investigation.complaintId - Complaint.id [delete: Set Null]
-
-Ref: Investigation.institutionId > Institution.id
+Ref: Investigation.complaintId - Complaint.id [delete: Restrict]
 
 Ref: Investigation.officeId > Office.id [delete: Set Null]
 
