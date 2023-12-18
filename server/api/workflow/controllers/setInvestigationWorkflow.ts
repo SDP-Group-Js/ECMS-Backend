@@ -13,31 +13,55 @@ import prisma from "../../../../prisma/client"
 
 export default async function setInvestigationWorkflow(
   investigationId: number,
-  institutionWorkflowId: number,
-  workflow: string[]
+  institutionWorkflow: any
 ) {
   try {
+    const investigation = await prisma.investigation.findUnique({
+      where: {
+        id: investigationId
+      }
+    })
+
+    if (investigation) {
+      if (investigation.institutionWorkflowId) {
+        throw new Error("Can't change Workflow once it is set")
+      }
+    }
+
     const updatedInvestigation = await prisma.investigation.update({
       where: {
-        id: investigationId,
+        id: investigationId
       },
       data: {
         institutionWorkflow: {
           connect: {
-            id: institutionWorkflowId
+            id: institutionWorkflow.id
           }
         },
-        workflow: workflow
+        investigationStages: {
+          createMany: {
+            data: [
+              ...institutionWorkflow.investigationStages.map(
+                (stage: string, index: number) => {
+                  return { stageName: stage, order: index + 1 }
+                }
+              )
+            ]
+          }
+        }
+      },
+      include: {
+        investigationStages: {
+          orderBy: {
+            order: "asc"
+          }
+        }
       }
     })
+
+    return updatedInvestigation
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        console.log(
-          "There is a unique constraint violation, a new workflow cannot be created with this email"
-        )
-      }
-    }
+    console.log(error)
     throw error
   }
 }

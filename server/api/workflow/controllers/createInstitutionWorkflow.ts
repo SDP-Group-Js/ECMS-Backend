@@ -2,13 +2,15 @@ import { Prisma } from "@prisma/client"
 import prisma from "../../../../prisma/client"
 
 /**
- * Starts an investigation for a complaint in a specific institution.
+ * Creates a workflow for an Instition/Division/Branch/Office
  *
  * @param institutionId - The ID of the institution.
- * @param institutionId - The optional ID of the office.
+ * @param officeId - The optional ID of the office.
  * @param stages - A list of stages
+ * @param name - The name of the workflow
+ * @param description - The description of the workflow
  * @returns The created workflow.
- * @throws Error if the institution is not found.
+ * @throws Error if the institution/office is not found.
  */
 
 export default async function createInstitutionWorkflow(

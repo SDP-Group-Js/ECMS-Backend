@@ -29,9 +29,9 @@ model User {
   institutionId String?
   institution   Institution? @relation(fields: [institutionId], references: [id], onDelete: SetNull, onUpdate: Cascade)
 
-  actions            Action[]
-  userRoles          UserRole[]
-  InvestigationStage InvestigationStage[]
+  actions              Action[]
+  userRoles            UserRole[]
+  InvestigationStage   InvestigationStage[]
 
   @@index([officeId])
   @@index([institutionId])
@@ -92,7 +92,7 @@ model Office {
   @@index([officeId])
 }
 
-enum OfficeType {
+enum OfficeType {zz
   Division
   Branch
   BeatOffice
@@ -119,7 +119,6 @@ model Investigation {
   id          Int                 @id @default(autoincrement())
   status      InvestigationStatus @default(NotAssigned)
   description String?
-  workflow    Json?
 
   complaintId Int       @unique
   complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Restrict, onUpdate: Cascade)
@@ -127,7 +126,8 @@ model Investigation {
   officeId              String?
   office                Office?   @relation(name: "AssignedInvestigation", fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
   institutionWorkflowId Int?
-  institutionWorkflow   Workflow? @relation(fields: [institutionWorkflowId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  institutionWorkflow   Workflow?   @relation(fields: [institutionWorkflowId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
 
   investigationStages InvestigationStage[]
   involvedParties     Office[]             @relation(name: "InvolvedInvestigation")

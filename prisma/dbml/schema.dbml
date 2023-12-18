@@ -81,9 +81,12 @@ Table Investigation {
   id Int [pk, increment]
   status InvestigationStatus [not null, default: 'NotAssigned']
   description String
-  workflow Json
-  complaintId Int [unique, not null]
-  complaint Complaint [not null]
+
+  complaintId Int [unique]
+  complaint Complaint
+  institutionId String [not null]
+  institution Institution [not null]
+
   officeId String
   office Office
   institutionWorkflowId Int
