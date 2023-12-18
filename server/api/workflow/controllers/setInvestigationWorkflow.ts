@@ -16,6 +16,18 @@ export default async function setInvestigationWorkflow(
   institutionWorkflow: any
 ) {
   try {
+    const investigation = await prisma.investigation.findUnique({
+      where: {
+        id: investigationId
+      }
+    })
+
+    if (investigation) {
+      if (investigation.institutionWorkflowId) {
+        throw new Error("Can't change Workflow once it is set")
+      }
+    }
+
     const updatedInvestigation = await prisma.investigation.update({
       where: {
         id: investigationId
@@ -29,17 +41,19 @@ export default async function setInvestigationWorkflow(
         investigationStages: {
           createMany: {
             data: [
-              ...institutionWorkflow.investigationStages.map((stage: string, index: number) => {
-                return { stageName: stage, order: index + 1 }
-              })
+              ...institutionWorkflow.investigationStages.map(
+                (stage: string, index: number) => {
+                  return { stageName: stage, order: index + 1 }
+                }
+              )
             ]
-          },
+          }
         }
       },
       include: {
         investigationStages: {
           orderBy: {
-            order: 'asc'
+            order: "asc"
           }
         }
       }

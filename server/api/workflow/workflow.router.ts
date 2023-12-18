@@ -5,6 +5,8 @@ import {
   updateInstitutionWorkflow
 } from "./controllers"
 import updateInvestigationStage from "./controllers/updateInvestigationStage"
+import assignInvestigationStage from "./controllers/assignInvestigationStage"
+import removeAssignedInvestigationStage from "./controllers/removeAssignedInvestigationStage"
 
 const workflowRouter: Router = express.Router()
 
@@ -62,7 +64,7 @@ workflowRouter.route("/investigation").put(async (req, res) => {
       institutionWorkflow
     )
     return res.status(200).json({
-      message: "Updated Investigation Stage",
+      message: "Updated Investigation",
       data: updatedInvestigation
     })
   } catch (error: any) {
@@ -93,5 +95,47 @@ workflowRouter.route("/investigationStage").put(async (req, res) => {
     })
   }
 })
+
+workflowRouter.route("/assignedInvestigationStage").put(async (req, res) => {
+  const { investigationStageId, officeId, officers } = req.body
+  try {
+    const updatedInvestigation = await assignInvestigationStage(
+      investigationStageId,
+      officeId,
+      officers
+    )
+    return res.status(200).json({
+      message: "Updated Investigation Stage",
+      data: updatedInvestigation
+    })
+  } catch (error: any) {
+    console.log(error)
+    res.status(500).json({
+      error: error?.message
+    })
+  }
+})
+
+workflowRouter
+  .route("removeAssignedInvestigationStage")
+  .put(async (req, res) => {
+    const { investigationStageId, officeId, officers } = req.body
+    try {
+      const updatedInvestigation = await removeAssignedInvestigationStage(
+        investigationStageId,
+        officeId,
+        officers
+      )
+      return res.status(200).json({
+        message: "Updated Investigation Stage",
+        data: updatedInvestigation
+      })
+    } catch (error: any) {
+      console.log(error)
+      res.status(500).json({
+        error: error?.message
+      })
+    }
+  })
 
 export default workflowRouter
