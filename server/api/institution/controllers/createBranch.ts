@@ -1,23 +1,21 @@
-import { Prisma, PrismaClient, Office, Institution } from "@prisma/client"
+import { Prisma, PrismaClient, Office } from "@prisma/client"
 const prisma = new PrismaClient()
 
-export default async function createDivision(
-  divisionName: string,
-  divisionDescription: string,
+export default async function createBranch(
+  branchName: string,
+  branchDescription: string,
   parentOfficeId: string
 ): Promise<Office> {
   try {
-    const parentInstitutionId = await getOfficeInstitutionId(parentOfficeId)
+    const parentDivisionId = await getOfficeDivisionId(parentOfficeId)
     const office: Office = await prisma.office.create({
       data: {
-        name: divisionName,
-        description: divisionDescription,
-        Division: {
-          create: { Institution: { connect: { id: parentInstitutionId } } }
-        }
+        name: branchName,
+        description: branchDescription,
+        Branch: { create: { Division: { connect: { id: parentDivisionId } } } }
       }
     })
-    if (!office) throw new Error(`Division not created`)
+    if (!office) throw new Error(`Branch not created`)
     return office
   } catch (error: any) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -33,19 +31,19 @@ export default async function createDivision(
   }
 }
 
-async function getOfficeInstitutionId(officeId: string): Promise<string> {
+async function getOfficeDivisionId(officeId: string): Promise<string> {
   try {
     const office = await prisma.office.findUnique({
       where: { id: officeId },
-      select: { Institution: { select: { id: true } } }
+      select: { Division: { select: { id: true } } }
     })
     if (!office) throw new Error(`Office with ID ${officeId} not found.`)
-    const institutionId = office.Institution?.id || null
-    if (!institutionId)
+    const DivisionId = office.Division?.id || null
+    if (!DivisionId)
       throw new Error(
         `Institution ID not found for office with ID ${officeId}.`
       )
-    return institutionId
+    return DivisionId
   } catch (error: any) {
     console.error("Error retrieving office institution ID:", error.message)
     throw error
