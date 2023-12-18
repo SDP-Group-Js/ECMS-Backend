@@ -1,7 +1,18 @@
-import createUser from "./createUser";
-import createUserRole from "./createUserRole";
-import registerUser from "./registerUser";
-import updateUser from "./updateUser";
-import updateUserRole from "./updateUserRole";
+import createUser from "./createUser"
+import registerUser from "./registerUser"
+import { updateUser, updatePublicUser } from "./updateUser"
+import { getUser, getPublicUser } from "./getUserDetails"
+import { getUsers, getPublicUsers } from "./getUsers"
+import publicUserExists from "./publicUserExists"
 
-export {createUser, registerUser, createUserRole, updateUser, updateUserRole}
+export {
+  createUser,
+  registerUser,
+  updateUser,
+  updatePublicUser,
+  getUser,
+  getPublicUser,
+  getUsers,
+  getPublicUsers,
+  publicUserExists
+}
