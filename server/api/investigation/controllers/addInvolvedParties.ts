@@ -12,7 +12,9 @@ export default async function addInvolvedParties(
       data: { involvedParties: { connect: officeIds.map((id) => ({ id })) } }
     })
     if (!investigation) {
-      throw new Error(`Failed to add involved parties.`)
+      throw new Error(
+        `Failed to add involved parties to investigation with Id ${investigationId}.`
+      )
     }
     return true
   } catch (error) {

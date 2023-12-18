@@ -1,9 +1,11 @@
 import express, { Request, Response, Router } from "express"
-//import { startInvestigation } from "./controllers"
-import viewInvestigations from "./controllers/viewInvestigations"
-import viewInvestigation from "./controllers/viewInvestigation"
-import { allocateInvestigation, startInvestigation } from "./controllers"
-import addInvolvedParties from "./controllers/addInvolvedParties"
+import {
+  startInvestigation,
+  allocateInvestigation,
+  viewInvestigation,
+  viewInvestigations,
+  addInvolvedParties
+} from "./controllers"
 
 interface Investigation {
   investigationDescription: string
