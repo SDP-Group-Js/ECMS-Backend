@@ -2,9 +2,192 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 datasource db {
   provider     = "mysql"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
+model PublicUser {
+  id         String      @id
+  nic        String      @unique
+  name       String
+  phone      String
+  complaints Complaint[]
+}
+
+model User {
+  id   String @id
+  name String
+
+  officeId String
+  office   Office @relation(fields: [officeId], references: [id], onDelete: NoAction, onUpdate: Cascade)
+
+  actions            Action[]
+  userRole           UserRole
+  InvestigationStage InvestigationStage[]
+
+  @@index([officeId])
+}
+
+enum UserRole {
+  SystemAdmin
+  OfficeAdmin
+  ComplaintHandler
+  InvestigationHandler
+  Viewer
+  FieldOfficer
+}
+
+model Complaint {
+  id                    Int     @id @default(autoincrement())
+  complaint_title       String?
+  complaint_description String?
+
+  complainerId String?
+  complainer   PublicUser? @relation(fields: [complainerId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  investigation Investigation?
+  institution   Institution?   @relation(fields: [institutionId], references: [id])
+  institutionId String?
+
+  @@index([complainerId])
+  @@index([institutionId])
+}
+
+model Institution {
+  id         String      @id @default(uuid())
+  complaints Complaint[]
+  divisions  Division[]
+  office     Office      @relation(fields: [officeId], references: [id])
+  officeId   String      @unique
+
+  @@index([officeId])
+}
+
+model Division {
+  id            String       @id @default(uuid())
+  branches      Branch[]
+  Institution   Institution? @relation(fields: [institutionId], references: [id])
+  institutionId String?
+  office        Office       @relation(fields: [officeId], references: [id])
+  officeId      String       @unique
+
+  @@index([officeId])
+  @@index([institutionId])
+}
+
+model Branch {
+  id         String       @id @default(uuid())
+  offices    BeatOffice[]
+  Division   Division?    @relation(fields: [divisionId], references: [id])
+  divisionId String?
+  office     Office       @relation(fields: [officeId], references: [id])
+  officeId   String       @unique
+
+  @@index([officeId])
+  @@index([divisionId])
+}
+
+model BeatOffice {
+  id       String  @id @default(uuid())
+  Branch   Branch? @relation(fields: [branchId], references: [id])
+  branchId String?
+  office   Office  @relation(fields: [officeId], references: [id])
+  officeId String  @unique
+
+  @@index([officeId])
+  @@index([branchId])
+}
+
+model Office {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  users                  User[]
+  assignedInvestigations Investigation[] @relation(name: "AssignedInvestigation")
+  involvedInvestigations Investigation[] @relation(name: "InvolvedInvestigation")
+  workflows              Workflow[]
+
+  Institution Institution?
+  Division    Division?
+  Branch      Branch?
+  BeatOffice  BeatOffice?
+}
+
+model Workflow {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+  stages      Json?
+
+  officeId String?
+  office   Office? @relation(fields: [officeId], references: [id])
+
+  investigations Investigation[]
+
+  @@index([officeId])
+}
+
+model Investigation {
+  id          Int                 @id @default(autoincrement())
+  status      InvestigationStatus @default(NotAssigned)
+  description String?
+
+  complaintId Int       @unique
+  complaint   Complaint @relation(fields: [complaintId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  officeId              String?
+  office                Office?   @relation(name: "AssignedInvestigation", fields: [officeId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  institutionWorkflowId Int?
+  institutionWorkflow   Workflow? @relation(fields: [institutionWorkflowId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+
+  investigationStages InvestigationStage[]
+  involvedParties     Office[]             @relation(name: "InvolvedInvestigation")
+
+  @@index([officeId])
+  @@index([institutionWorkflowId])
+}
+
+enum InvestigationStatus {
+  NotAssigned
+  Ongoing
+  Completed
+}
+
+model InvestigationStage {
+  id          Int     @id @default(autoincrement())
+  stageName   String
+  description String?
+  conclusion  String?
+  order       Int
+  tasks       Json?
+
+  assignedOfficers User[]
+
+  investigationId Int
+  investigation   Investigation @relation(fields: [investigationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  actions  Action[]
+  status   String   @default("Ongoing")
+  officeId String?
+
+  @@index([investigationId])
+}
+
+model Action {
+  id                   Int                @id @default(autoincrement())
+  investigationStage   InvestigationStage @relation(fields: [investigationStageId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  investigationStageId Int
+  name                 String
+  description          String?
+  user                 User?              @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
+  userId               String?            @unique
+
+  @@index([investigationStageId])
+}

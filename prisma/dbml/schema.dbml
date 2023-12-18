@@ -1,0 +1,178 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table PublicUser {
+  id String [pk]
+  nic String [unique, not null]
+  name String [not null]
+  phone String [not null]
+  complaints Complaint [not null]
+}
+
+Table User {
+  id String [pk]
+  name String [not null]
+  officeId String [not null]
+  office Office [not null]
+  actions Action [not null]
+  userRole UserRole [not null]
+  InvestigationStage InvestigationStage [not null]
+}
+
+Table Complaint {
+  id Int [pk, increment]
+  complaint_title String
+  complaint_description String
+  complainerId String
+  complainer PublicUser
+  investigation Investigation
+  institution Institution
+  institutionId String
+}
+
+Table Institution {
+  id String [pk]
+  complaints Complaint [not null]
+  divisions Division [not null]
+  office Office [not null]
+  officeId String [unique, not null]
+}
+
+Table Division {
+  id String [pk]
+  branches Branch [not null]
+  Institution Institution
+  institutionId String
+  office Office [not null]
+  officeId String [unique, not null]
+}
+
+Table Branch {
+  id String [pk]
+  offices BeatOffice [not null]
+  Division Division
+  divisionId String
+  office Office [not null]
+  officeId String [unique, not null]
+}
+
+Table BeatOffice {
+  id String [pk]
+  Branch Branch
+  branchId String
+  office Office [not null]
+  officeId String [unique, not null]
+}
+
+Table Office {
+  id String [pk]
+  name String [not null]
+  description String
+  users User [not null]
+  assignedInvestigations Investigation [not null]
+  involvedInvestigations Investigation [not null]
+  workflows Workflow [not null]
+  Institution Institution
+  Division Division
+  Branch Branch
+  BeatOffice BeatOffice
+}
+
+Table Workflow {
+  id Int [pk, increment]
+  name String [not null]
+  description String
+  stages Json
+  officeId String
+  office Office
+  investigations Investigation [not null]
+}
+
+Table Investigation {
+  id Int [pk, increment]
+  status InvestigationStatus [not null, default: 'NotAssigned']
+  description String
+  complaintId Int [unique, not null]
+  complaint Complaint [not null]
+  officeId String
+  office Office
+  institutionWorkflowId Int
+  institutionWorkflow Workflow
+  investigationStages InvestigationStage [not null]
+  involvedParties Office [not null]
+}
+
+Table InvestigationStage {
+  id Int [pk, increment]
+  stageName String [not null]
+  description String
+  conclusion String
+  order Int [not null]
+  tasks Json
+  assignedOfficers User [not null]
+  investigationId Int [not null]
+  investigation Investigation [not null]
+  actions Action [not null]
+  status String [not null, default: 'Ongoing']
+  officeId String
+}
+
+Table Action {
+  id Int [pk, increment]
+  investigationStage InvestigationStage [not null]
+  investigationStageId Int [not null]
+  name String [not null]
+  description String
+  user User
+  userId String [unique]
+}
+
+Enum UserRole {
+  SystemAdmin
+  OfficeAdmin
+  ComplaintHandler
+  InvestigationHandler
+  Viewer
+  FieldOfficer
+}
+
+Enum InvestigationStatus {
+  NotAssigned
+  Ongoing
+  Completed
+}
+
+Ref: User.officeId > Office.id [delete: No Action]
+
+Ref: Complaint.complainerId > PublicUser.id [delete: Set Null]
+
+Ref: Complaint.institutionId > Institution.id
+
+Ref: Institution.officeId - Office.id
+
+Ref: Division.institutionId > Institution.id
+
+Ref: Division.officeId - Office.id
+
+Ref: Branch.divisionId > Division.id
+
+Ref: Branch.officeId - Office.id
+
+Ref: BeatOffice.branchId > Branch.id
+
+Ref: BeatOffice.officeId - Office.id
+
+Ref: Workflow.officeId > Office.id
+
+Ref: Investigation.complaintId - Complaint.id [delete: Restrict]
+
+Ref: Investigation.officeId > Office.id [delete: Set Null]
+
+Ref: Investigation.institutionWorkflowId > Workflow.id [delete: Set Null]
+
+Ref: InvestigationStage.investigationId > Investigation.id [delete: Cascade]
+
+Ref: Action.investigationStageId > InvestigationStage.id [delete: Cascade]
+
+Ref: Action.userId > User.id [delete: Set Null]

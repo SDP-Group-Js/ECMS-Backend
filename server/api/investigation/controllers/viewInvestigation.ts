@@ -1,20 +1,15 @@
-import { Prisma, PrismaClient, Investigation } from "@prisma/client"
-
+import { Investigation, Prisma, PrismaClient } from "@prisma/client"
 const prisma = new PrismaClient()
 
-export default async function startInvestigation(
-  investigationDescription: string,
-  complaintId: number,
-  institutionId: string
+export default async function viewInvestigation(
+  investigationId: number
 ): Promise<Investigation> {
   try {
-    const investigation: Investigation = await prisma.investigation.create({
-      data: {
-        description: investigationDescription,
-        complaint: { connect: { id: complaintId } }
-      }
-    })
-    if (!investigation) throw new Error(`Investigation not created`)
+    const investigation: Investigation | null =
+      await prisma.investigation.findUnique({
+        where: { id: investigationId }
+      })
+    if (!investigation) throw new Error(`User not found`)
     return investigation
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
