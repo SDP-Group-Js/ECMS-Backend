@@ -2,13 +2,10 @@ import { Prisma, PrismaClient, User, PublicUser } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-export async function getPublicUser(userId: string): Promise<PublicUser> {
+export async function getPublicUsers(): Promise<PublicUser[]> {
   try {
-    const publicUser: PublicUser | null = await prisma.publicUser.findUnique({
-      where: { id: userId }
-    })
-    if (!publicUser) throw new Error(`User not found`)
-    return publicUser
+    const publicUsers: PublicUser[] = await prisma.publicUser.findMany()
+    return publicUsers
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2025") {
@@ -23,13 +20,10 @@ export async function getPublicUser(userId: string): Promise<PublicUser> {
   }
 }
 
-export async function getUser(userId: string): Promise<User> {
+export async function getUsers(): Promise<User[]> {
   try {
-    const user: User | null = await prisma.user.findUnique({
-      where: { id: userId }
-    })
-    if (!user) throw new Error(`User not found`)
-    return user
+    const users: User[] = await prisma.user.findMany()
+    return users
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2025") {
