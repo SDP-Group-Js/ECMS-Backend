@@ -13,8 +13,7 @@ import prisma from "../../../../prisma/client"
 
 export default async function setInvestigationWorkflow(
   investigationId: number,
-  institutionWorkflowId: number,
-  workflow: string[]
+  institutionWorkflow: any
 ) {
   try {
     const updatedInvestigation = await prisma.investigation.update({
@@ -24,13 +23,13 @@ export default async function setInvestigationWorkflow(
       data: {
         institutionWorkflow: {
           connect: {
-            id: institutionWorkflowId
+            id: institutionWorkflow.id
           }
         },
         investigationStages: {
           createMany: {
             data: [
-              ...workflow.map((stage, index) => {
+              ...institutionWorkflow.investigationStages.map((stage: string, index: number) => {
                 return { stageName: stage, order: index + 1 }
               })
             ]
@@ -48,13 +47,7 @@ export default async function setInvestigationWorkflow(
 
     return updatedInvestigation
   } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        console.log(
-          "There is a unique constraint violation, a new workflow cannot be created with this email"
-        )
-      }
-    }
+    console.log(error)
     throw error
   }
 }

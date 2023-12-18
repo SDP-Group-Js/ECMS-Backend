@@ -93,7 +93,7 @@ model Office {
   @@index([officeId])
 }
 
-enum OfficeType {
+enum OfficeType {zz
   Division
   Branch
   BeatOffice
