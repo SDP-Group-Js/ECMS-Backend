@@ -1,4 +1,3 @@
-
 import { Prisma, PrismaClient, Complaint, Institution } from "@prisma/client"
 const prisma = new PrismaClient()
 
@@ -10,7 +9,7 @@ export default async function allocateComplaint(
     const complaint: Complaint = await prisma.complaint.update({
       where: { id: complaintId },
       data: {
-        assignedInstitution: { connect: { id: institutionId } }
+        institution: { connect: { id: institutionId } }
       }
     })
     if (!complaint)

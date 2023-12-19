@@ -1,6 +1,10 @@
 import express, { Request, Response, Router } from "express"
-import reportComplaint from "./controllers/reportComplaint"
-import { allocateComplaint, viewComplaints } from "./controllers"
+import {
+  reportComplaint,
+  viewComplaint,
+  allocateComplaint,
+  viewComplaints
+} from "./controllers"
 
 interface Complaint {
   complaintTitle: string
@@ -36,5 +40,11 @@ complaintRouter
     const complaint = await allocateComplaint(complaintId, institutionId)
     return res.json(complaint)
   })
+
+complaintRouter.route("/:id").get(async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id)
+  const complaint = await viewComplaint(id)
+  return res.json(complaint)
+})
 
 export default complaintRouter
