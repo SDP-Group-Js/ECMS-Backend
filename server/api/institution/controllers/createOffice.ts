@@ -1,8 +1,4 @@
 import { Prisma, PrismaClient, Office } from "@prisma/client"
-import createInstitution from "./createInstitution"
-import createDivision from "./createDivision"
-import createBranch from "./createBranch"
-import createBeatOffice from "./createBeatOffice"
 const prisma = new PrismaClient()
 
 enum OfficeType {
@@ -28,27 +24,49 @@ export default async function createOffice({
   try {
     let office: Office | null
     if (officeType == OfficeType.Institution) {
-      office = await createInstitution(officeName, officeDescription)
+      office = await await prisma.office.create({
+        data: {
+          name: officeName,
+          description: officeDescription,
+          Institution: { create: {} }
+        }
+      })
+      if (!office) throw new Error(`Institution not created`)
     } else {
       if (!parentOfficeId) throw new Error(`Parent Office Id cannot be empty`)
       if (officeType == OfficeType.Division) {
-        office = await createDivision(
-          officeName,
-          officeDescription,
-          parentOfficeId
-        )
+        office = await prisma.office.create({
+          data: {
+            name: officeName,
+            description: officeDescription,
+            Division: {
+              create: { Institution: { connect: { id: parentOfficeId } } }
+            }
+          }
+        })
+        if (!office) throw new Error(`Division not created`)
       } else if (officeType == OfficeType.Branch) {
-        office = await createBranch(
-          officeName,
-          officeDescription,
-          parentOfficeId
-        )
+        office = await await prisma.office.create({
+          data: {
+            name: officeName,
+            description: officeDescription,
+            Branch: {
+              create: { Division: { connect: { id: parentOfficeId } } }
+            }
+          }
+        })
+        if (!office) throw new Error(`Branch not created`)
       } else if (officeType == OfficeType.BeatOffice) {
-        office = await createBeatOffice(
-          officeName,
-          officeDescription,
-          parentOfficeId
-        )
+        office = await prisma.office.create({
+          data: {
+            name: officeName,
+            description: officeDescription,
+            BeatOffice: {
+              create: { Branch: { connect: { id: parentOfficeId } } }
+            }
+          }
+        })
+        if (!office) throw new Error(`Beat Office not created`)
       } else {
         office = null
       }
