@@ -1,14 +1,15 @@
 import express, { Request, Response, Router } from "express"
-//import { startInvestigation } from "./controllers"
-import viewInvestigations from "./controllers/viewInvestigations"
-import viewInvestigation from "./controllers/viewInvestigation"
-import { allocateInvestigation, startInvestigation } from "./controllers"
-import addInvolvedParties from "./controllers/addInvolvedParties"
+import {
+  startInvestigation,
+  allocateInvestigation,
+  viewInvestigation,
+  viewInvestigations,
+  addInvolvedParties
+} from "./controllers"
 
 interface Investigation {
   investigationDescription: string
   complaintId: number
-  institutionId: string
 }
 
 interface InvestigationToAllocate {
@@ -28,15 +29,10 @@ investigationRouter
     return res.json(investigations)
   })
   .post(async (req: Request, res: Response) => {
-    const {
-      investigationDescription,
-      complaintId,
-      institutionId
-    }: Investigation = req.body
+    const { investigationDescription, complaintId }: Investigation = req.body
     const newInvestigation = await startInvestigation(
       investigationDescription,
-      complaintId,
-      institutionId
+      complaintId
     )
     return res.json(newInvestigation)
   })

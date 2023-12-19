@@ -4,8 +4,7 @@ const prisma = new PrismaClient()
 
 export default async function startInvestigation(
   investigationDescription: string,
-  complaintId: number,
-  institutionId: string
+  complaintId: number
 ): Promise<Investigation> {
   try {
     const investigation: Investigation = await prisma.investigation.create({
