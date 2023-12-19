@@ -1,8 +1,5 @@
-import createDivision from "./createDivision";
-import createInstitution from "./createInstitution";
-import createOffice from "./createOffice";
-import updateDivision from "./updateDivision";
-import updateInstitution from "./updateInstitution";
-import updateOffice from "./updateOffice";
+import createOffice from "./createOffice"
+import updateOffice from "./updateOffice"
+import { viewOffices, viewOffice } from "./viewOffice"
 
-export {createInstitution, updateInstitution, createDivision, updateDivision, createOffice, updateOffice}
+export { createOffice, updateOffice, viewOffices, viewOffice }
