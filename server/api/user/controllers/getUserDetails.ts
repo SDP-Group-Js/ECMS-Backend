@@ -2,28 +2,12 @@ import { Prisma, PrismaClient, User, PublicUser } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-enum UserRole {
-  SystemAdmin = "SystemAdmin",
-  OfficeAdmin = "OfficeAdmin",
-  ComplaintHandler = "ComplaintHandler",
-  InvestigationHandler = "InvestigationHandler",
-  Viewer = "Viewer",
-  FieldOfficer = "FieldOfficer"
-}
-
-export async function updatePublicUser(
-  userId: string,
-  userNIC: string,
-  userName: string,
-  userPhone: string
-): Promise<PublicUser> {
+export async function getPublicUser(userId: string): Promise<PublicUser> {
   try {
-    const publicUser: PublicUser = await prisma.publicUser.update({
-      where: { id: userId },
-      data: { nic: userNIC, name: userName, phone: userPhone }
+    const publicUser: PublicUser | null = await prisma.publicUser.findUnique({
+      where: { id: userId }
     })
-    if (!publicUser)
-      throw new Error(`Public User with Id ${userId} not updated`)
+    if (!publicUser) throw new Error(`User not found`)
     return publicUser
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -39,22 +23,13 @@ export async function updatePublicUser(
   }
 }
 
-export async function updateUser(
-  userId: string,
-  userName: string,
-  userOfficeId: string,
-  userRole: UserRole
-): Promise<User> {
+export async function getUser(userId: string): Promise<User> {
   try {
-    const user: User = await prisma.user.update({
+    const user: User | null = await prisma.user.findUnique({
       where: { id: userId },
-      data: {
-        name: userName,
-        office: { connect: { id: userOfficeId } },
-        userRole: userRole
-      }
+      include: { office: { include: { assignedInvestigations: true } } }
     })
-    if (!user) throw new Error(`Public User with Id ${userId} not updated`)
+    if (!user) throw new Error(`User not found`)
     return user
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
