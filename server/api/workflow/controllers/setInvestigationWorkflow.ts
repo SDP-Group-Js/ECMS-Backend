@@ -41,7 +41,7 @@ export default async function setInvestigationWorkflow(
         investigationStages: {
           createMany: {
             data: [
-              ...institutionWorkflow.investigationStages.map(
+              ...institutionWorkflow.stages.map(
                 (stage: string, index: number) => {
                   return { stageName: stage, order: index + 1 }
                 }

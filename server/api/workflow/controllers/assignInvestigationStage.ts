@@ -17,23 +17,23 @@ export default async function assignInvestigationStage(
   officers: string[]
 ) {
   try {
-    let setResponsibleOffice = {}
+    // let setResponsibleOffice = {}
 
-    if (officeId) {
-      setResponsibleOffice = {
-        responsibleOffice: {
-          connect: {
-            id: officeId
-          }
-        }
-      }
-    }
+    // if (officeId) {
+    //   setResponsibleOffice = {
+    //     responsibleOffice: {
+    //       connect: {
+    //         id: officeId
+    //       }
+    //     }
+    //   }
+    // }
     const updatedInvestigation = await prisma.investigationStage.update({
       where: {
         id: investigationStageId
       },
       data: {
-        ...setResponsibleOffice,
+        officeId: officeId,
         assignedOfficers: {
           connect: [...officers.map((officer) => ({ id: officer }))]
         }
