@@ -18,14 +18,10 @@ export default async function authenticate(req: any, res: any, next: any) {
   if (req.headers?.authorization?.startsWith("Bearer ")) {
     const idToken = req.headers.authorization.split("Bearer ")[1]
 
-    console.log(idToken)
-
     try {
       const decodedToken = await admin.auth().verifyIdToken(idToken)
       req.user = decodedToken
-      console.log(req.user)
-
-      return next(decodedToken)
+      return next()
     } catch (err) {
       console.log(err)
     }

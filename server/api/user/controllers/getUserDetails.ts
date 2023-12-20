@@ -27,7 +27,7 @@ export async function getUser(userId: string): Promise<User> {
   try {
     const user: User | null = await prisma.user.findUnique({
       where: { id: userId },
-      include: { office: { include: { assignedInvestigations: true } } }
+      include: { office: { include: { assignedInvestigations: true, workflows: true } } }
     })
     if (!user) throw new Error(`User not found`)
     return user
