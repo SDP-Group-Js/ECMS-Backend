@@ -58,6 +58,12 @@ userRouter
     return res.json(updatedUser)
   })
 
+userRouter.route("/users/:id").get(async (req: any, res: Response) => {
+  const userId: string = req.params.id
+  const user = await getUser(userId)
+  return res.json(user)
+})
+
 userRouter.route("/getDetails").get(async (req: any, res: Response) => {
   const userId: string = req.user.uid
   const user = await getUser(userId)
