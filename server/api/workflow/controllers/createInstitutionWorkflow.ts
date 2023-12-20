@@ -4,8 +4,7 @@ import prisma from "../../../../prisma/client"
 /**
  * Creates a workflow for an Instition/Division/Branch/Office
  *
- * @param institutionId - The ID of the institution.
- * @param officeId - The optional ID of the office.
+ * @param officeId - The ID of the office.
  * @param stages - A list of stages
  * @param name - The name of the workflow
  * @param description - The description of the workflow
