@@ -1,6 +1,8 @@
+import { Request } from "express"
+
 const admin = require("firebase-admin")
 
-var serviceAccount = require("./sdpgroupjs-firebase-adminsdk-fe3do-f252347927.json")
+var serviceAccount = require("./sdpgroupjs-firebase-adminsdk-fe3do-6bd3295583.json")
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -12,16 +14,24 @@ admin.initializeApp({
  */
 
 export default async function authenticate(req: any, res: any, next: any) {
+  console.log("authentication")
   if (req.headers?.authorization?.startsWith("Bearer ")) {
     const idToken = req.headers.authorization.split("Bearer ")[1]
+
+    console.log(idToken)
 
     try {
       const decodedToken = await admin.auth().verifyIdToken(idToken)
       req.user = decodedToken
+      console.log(req.user)
+
+      return next(decodedToken)
     } catch (err) {
       console.log(err)
     }
   }
 
-  next()
+  return res.send({
+    error: "Unauthorised"
+  })
 }
