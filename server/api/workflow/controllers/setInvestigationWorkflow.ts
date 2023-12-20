@@ -42,7 +42,11 @@ export default async function setInvestigationWorkflow(
             data: [
               ...institutionWorkflow.stages.map(
                 (stage: string, index: number) => {
-                  return { stageName: stage, order: index + 1 }
+                  return {
+                    stageName: stage,
+                    order: index + 1,
+                    status: "Pending"
+                  }
                 }
               )
             ]

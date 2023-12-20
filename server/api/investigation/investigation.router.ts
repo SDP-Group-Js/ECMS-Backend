@@ -5,7 +5,8 @@ import {
   viewInvestigation,
   viewInvestigations,
   addInvolvedParties,
-  captureAction
+  captureAction,
+  completeInvestigationStage
 } from "./controllers"
 
 interface Investigation {
@@ -92,6 +93,16 @@ investigationRouter
       actionUserId
     )
     return res.json(action)
+  })
+
+investigationRouter
+  .route("/completeStage/:id")
+  .put(async (req: Request, res: Response) => {
+    const investigationStageId: number = parseInt(req.params.id)
+
+    const stage = await completeInvestigationStage(investigationStageId)
+    if (stage) return res.status(200).json({ message: "success" })
+    else return res.status(500).json({ message: "failed" })
   })
 
 export default investigationRouter

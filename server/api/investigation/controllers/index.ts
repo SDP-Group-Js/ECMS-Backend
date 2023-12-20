@@ -4,6 +4,7 @@ import addInvolvedParties from "./addInvolvedParties"
 import viewInvestigation from "./viewInvestigation"
 import viewInvestigations from "./viewInvestigations"
 import captureAction from "./captureAction"
+import completeInvestigationStage from "./completeStage"
 
 export {
   allocateInvestigation,
@@ -11,5 +12,6 @@ export {
   addInvolvedParties,
   viewInvestigation,
   viewInvestigations,
-  captureAction
+  captureAction,
+  completeInvestigationStage
 }
