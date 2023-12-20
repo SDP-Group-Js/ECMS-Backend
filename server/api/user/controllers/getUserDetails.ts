@@ -36,7 +36,8 @@ export async function getUser(userId: string): Promise<User> {
                   include: { actions: { include: { user: true } } }
                 }
               }
-            }
+            },
+            workflows: true
           }
         }
       }
