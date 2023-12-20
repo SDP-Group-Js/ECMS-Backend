@@ -6,7 +6,6 @@ import prisma from "../../../../prisma/client"
  *
  * @param investigationId - The ID of the investigation.
  * @param institutionWorkflowId - The ID of the institution workflow.
- * @param workflow - Investigation Workflow
  * @returns The updated investigation with workflow.
  * @throws Error if the institution is not found.
  */
