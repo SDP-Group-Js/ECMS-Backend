@@ -3,7 +3,8 @@ import {
   reportComplaint,
   viewComplaint,
   allocateComplaint,
-  viewComplaints
+  viewComplaints,
+  viewComplaintsOfUser
 } from "./controllers"
 
 interface Complaint {
@@ -15,6 +16,10 @@ interface Complaint {
 interface Allocation {
   complaintId: number
   institutionId: string
+}
+
+interface ComplaintsOfUser {
+  userId: string
 }
 
 const complaintRouter: Router = express.Router()
@@ -46,5 +51,13 @@ complaintRouter.route("/:id").get(async (req: Request, res: Response) => {
   const complaint = await viewComplaint(id)
   return res.json(complaint)
 })
+
+complaintRouter
+  .route("/userComplaints/:userId")
+  .get(async (req: Request, res: Response) => {
+    const userId = req.params.userId.toString()
+    const complaints = await viewComplaintsOfUser(userId)
+    return res.json(complaints)
+  })
 
 export default complaintRouter
