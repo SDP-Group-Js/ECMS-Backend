@@ -125,7 +125,7 @@ Table Action {
   name String [not null]
   description String
   user User
-  userId String [unique]
+  userId String
 }
 
 Enum UserRole {

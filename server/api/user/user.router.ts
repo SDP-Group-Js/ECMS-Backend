@@ -58,7 +58,8 @@ userRouter
     return res.json(updatedUser)
   })
 
-userRouter.route("/users/:id").get(async (req: Request, res: Response) => {
+userRouter.route("/users/:id").get(async (req: any, res: Response) => {
+  console.log(req.user.uid)
   const userId: string = req.params.id.toString()
   const user = await getUser(userId)
   return res.json(user)

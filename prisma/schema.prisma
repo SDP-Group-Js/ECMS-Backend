@@ -187,7 +187,8 @@ model Action {
   name                 String
   description          String?
   user                 User?              @relation(fields: [userId], references: [id], onDelete: SetNull, onUpdate: Cascade)
-  userId               String?            @unique
+  userId               String?
 
   @@index([investigationStageId])
+  @@index([userId])
 }

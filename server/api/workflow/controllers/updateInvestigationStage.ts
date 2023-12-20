@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client"
 import prisma from "../../../../prisma/client"
 
 /**
- * Starts an investigation for a complaint in a specific institution.
+ * Updates Investigation Stage Details
  *
  * @param investigationId - The ID of the investigation.
  * @param institutionWorkflowId - The ID of the institution workflow.

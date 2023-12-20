@@ -1,11 +1,13 @@
 import express, { Request, Response } from "express"
 import apiRouter from "./api"
+import authenticate from "./middleware/authenticated"
 require("dotenv").config()
 
 const app = express()
 
 // Add express.json middleware
 app.use(express.json())
+app.use(authenticate)
 
 // Attach routes in to app
 app.use("/api", apiRouter)
