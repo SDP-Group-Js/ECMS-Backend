@@ -2,7 +2,7 @@ import { Prisma } from "@prisma/client"
 import prisma from "../../../../prisma/client"
 
 /**
- * Updates
+ * Updates Institution Workflow
  *
  * @param investigationId - The ID of the investigation.
  * @param institutionWorkflowId - The ID of the institution workflow.
