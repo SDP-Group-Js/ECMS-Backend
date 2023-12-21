@@ -9,6 +9,7 @@ export async function viewComplaintsOfUser(
   userId: string
 ): Promise<Complaint[]> {
   return await prisma.complaint.findMany({
+    where: { complainerId: userId },
     include: {
       investigation: {
         include: {
