@@ -5,6 +5,7 @@ import {
   updateUser,
   updatePublicUser,
   getUser,
+  getECMSUser,
   getPublicUser,
   getUsers,
   getPublicUsers,
@@ -64,11 +65,15 @@ userRouter.route("/users/:id").get(async (req: any, res: Response) => {
   return res.json(user)
 })
 
-userRouter.route("/getDetails").get(async (req: any, res: Response) => {
-  const userId: string = req.user.uid
-  const user = await getUser(userId)
-  return res.json(user)
-})
+userRouter
+  .route("/users/getDetails/:id")
+  .get(async (req: any, res: Response) => {
+    const userId: string = req.params.id
+    console.log(userId)
+    const user = await getECMSUser(userId)
+    console.log(user)
+    return res.json(user)
+  })
 
 userRouter
   .route("/publicUsers")
