@@ -49,7 +49,31 @@ export async function getECMSUser(userId: string): Promise<User> {
                 involvedParties: true
               }
             },
-            workflows: { include: { office: true, investigations: true } }
+            workflows: { include: { office: true, investigations: true } },
+            Institution: { include: { complaints: true } },
+            Division: {
+              include: { Institution: { include: { complaints: true } } }
+            },
+            Branch: {
+              include: {
+                Division: {
+                  include: { Institution: { include: { complaints: true } } }
+                }
+              }
+            },
+            BeatOffice: {
+              include: {
+                Branch: {
+                  include: {
+                    Division: {
+                      include: {
+                        Institution: { include: { complaints: true } }
+                      }
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
