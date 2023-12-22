@@ -52,12 +52,20 @@ export async function getECMSUser(userId: string): Promise<User> {
             workflows: { include: { office: true, investigations: true } },
             Institution: { include: { complaints: true } },
             Division: {
-              include: { Institution: { include: { complaints: true } } }
+              include: {
+                Institution: {
+                  include: { complaints: { include: { complainer: true } } }
+                }
+              }
             },
             Branch: {
               include: {
                 Division: {
-                  include: { Institution: { include: { complaints: true } } }
+                  include: {
+                    Institution: {
+                      include: { complaints: { include: { complainer: true } } }
+                    }
+                  }
                 }
               }
             },
@@ -67,7 +75,11 @@ export async function getECMSUser(userId: string): Promise<User> {
                   include: {
                     Division: {
                       include: {
-                        Institution: { include: { complaints: true } }
+                        Institution: {
+                          include: {
+                            complaints: { include: { complainer: true } }
+                          }
+                        }
                       }
                     }
                   }
