@@ -7,8 +7,11 @@ import {
 import updateInvestigationStage from "./controllers/updateInvestigationStage"
 import assignInvestigationStage from "./controllers/assignInvestigationStage"
 import removeAssignedInvestigationStage from "./controllers/removeAssignedInvestigationStage"
+import authenticate from "../../middleware/authenticated"
 
 const workflowRouter: Router = express.Router()
+
+workflowRouter.use(authenticate)
 
 workflowRouter
   .route("/institution")

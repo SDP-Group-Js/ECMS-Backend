@@ -6,6 +6,7 @@ import {
   viewComplaints,
   viewComplaintsOfUser
 } from "./controllers"
+import authenticate from "../../middleware/authenticated"
 
 interface Complaint {
   complaintTitle: string
@@ -23,6 +24,8 @@ interface ComplaintsOfUser {
 }
 
 const complaintRouter: Router = express.Router()
+
+complaintRouter.use(authenticate)
 
 complaintRouter
   .route("/")

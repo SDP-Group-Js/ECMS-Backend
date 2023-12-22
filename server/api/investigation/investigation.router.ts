@@ -8,6 +8,7 @@ import {
   captureAction,
   completeInvestigationStage
 } from "./controllers"
+import authenticate from "../../middleware/authenticated"
 
 interface Investigation {
   investigationDescription: string
@@ -30,6 +31,8 @@ interface INvestigationCaptureAction {
 }
 
 const investigationRouter: Router = express.Router()
+
+investigationRouter.use(authenticate)
 
 investigationRouter
   .route("/")

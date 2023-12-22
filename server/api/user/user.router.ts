@@ -11,6 +11,7 @@ import {
   getPublicUsers,
   publicUserExists
 } from "./controllers"
+import authenticate from "../../middleware/authenticated"
 
 enum UserRole {
   SystemAdmin = "SystemAdmin",
@@ -39,16 +40,16 @@ const userRouter: Router = express.Router()
 
 userRouter
   .route("/users")
-  .get(async (req: Request, res: Response) => {
+  .get(authenticate, async (req: Request, res: Response) => {
     const users = await getUsers()
     res.json(users)
   })
-  .post(async (req: Request, res: Response) => {
+  .post(authenticate, async (req: Request, res: Response) => {
     const { userId, userName, userOfficeId, userRole }: User = req.body
     const newUser = await createUser(userId, userName, userOfficeId, userRole)
     return res.json(newUser)
   })
-  .put(async (req: Request, res: Response) => {
+  .put(authenticate, async (req: Request, res: Response) => {
     const { userId, userName, userOfficeId, userRole }: User = req.body
     const updatedUser = await updateUser(
       userId,
@@ -67,7 +68,7 @@ userRouter.route("/users/:id").get(async (req: any, res: Response) => {
 
 userRouter
   .route("/users/getDetails/:id")
-  .get(async (req: any, res: Response) => {
+  .get(authenticate, async (req: any, res: Response) => {
     const userId: string = req.params.id
     console.log(userId)
     const user = await getECMSUser(userId)
@@ -77,7 +78,7 @@ userRouter
 
 userRouter
   .route("/publicUsers")
-  .get(async (req: Request, res: Response) => {
+  .get(authenticate, async (req: Request, res: Response) => {
     const publicUsers = await getPublicUsers()
     res.json(publicUsers)
   })
@@ -91,7 +92,7 @@ userRouter
     )
     return res.json(newPublicUser)
   })
-  .put(async (req: Request, res: Response) => {
+  .put(authenticate, async (req: Request, res: Response) => {
     const { userId, userNIC, userName, userPhone }: PublicUser = req.body
     const updatedPublicUser = await updatePublicUser(
       userId,
@@ -104,7 +105,7 @@ userRouter
 
 userRouter
   .route("/publicUsers/:id")
-  .get(async (req: Request, res: Response) => {
+  .get(authenticate, async (req: Request, res: Response) => {
     const userId: string = req.params.id.toString()
     const publicUser = await getPublicUser(userId)
     return res.json(publicUser)

@@ -6,6 +6,7 @@ import {
   viewOffice
 } from "./controllers"
 import { Office } from "@prisma/client"
+import authenticate from "../../middleware/authenticated"
 
 enum OfficeType {
   Institution = "Institution",
@@ -22,6 +23,8 @@ interface OfficeData {
 }
 
 const institutionRouter: Router = express.Router()
+
+institutionRouter.use(authenticate)
 
 institutionRouter
   .route("/")
