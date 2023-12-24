@@ -11,5 +11,12 @@ export async function viewOffice(officeId: string): Promise<Office> {
 }
 
 export async function viewOffices(): Promise<Office[]> {
-  return await prisma.office.findMany()
+  return await prisma.office.findMany({
+    include: {
+      Institution: true,
+      Division: true,
+      Branch: true,
+      BeatOffice: true
+    }
+  })
 }
