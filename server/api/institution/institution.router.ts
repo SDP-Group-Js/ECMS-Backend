@@ -3,7 +3,8 @@ import {
   createOffice,
   updateOffice,
   viewOffices,
-  viewOffice
+  viewOffice,
+  viewInstitutions
 } from "./controllers"
 import { Office } from "@prisma/client"
 import authenticate from "../../middleware/authenticated"
@@ -36,6 +37,13 @@ institutionRouter
     const officeData: OfficeData = req.body
     const newOffice = await createOffice(officeData)
     return res.json(newOffice)
+  })
+
+institutionRouter
+  .route("/institutions")
+  .get(async (req: Request, res: Response) => {
+    const institutions: Office[] = await viewInstitutions()
+    res.json(institutions)
   })
 
 institutionRouter

@@ -1,7 +1,10 @@
 import allocateComplaint from "./allocateComplaint"
 import reportComplaint from "./reportComplaint"
 import viewComplaints from "./viewComplaints"
-import { viewComplaintsOfUser } from "./viewComplaints"
+import {
+  viewComplaintsOfUser,
+  viewUnAllocatedComplaints
+} from "./viewComplaints"
 import viewComplaint from "./viewComplaint"
 
 export {
@@ -9,5 +12,6 @@ export {
   reportComplaint,
   viewComplaints,
   viewComplaintsOfUser,
+  viewUnAllocatedComplaints,
   viewComplaint
 }

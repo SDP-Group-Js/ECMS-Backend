@@ -4,6 +4,7 @@ import {
   viewComplaint,
   allocateComplaint,
   viewComplaints,
+  viewUnAllocatedComplaints,
   viewComplaintsOfUser
 } from "./controllers"
 import authenticate from "../../middleware/authenticated"
@@ -48,6 +49,11 @@ complaintRouter
     const complaint = await allocateComplaint(complaintId, institutionId)
     return res.json(complaint)
   })
+
+complaintRouter.route("/unallocatedComplaints").get(async (req, res) => {
+  const complaints = await viewUnAllocatedComplaints()
+  return res.json(complaints)
+})
 
 complaintRouter.route("/:id").get(async (req: Request, res: Response) => {
   const id = parseInt(req.params.id)

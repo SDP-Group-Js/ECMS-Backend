@@ -20,3 +20,12 @@ export async function viewOffices(): Promise<Office[]> {
     }
   })
 }
+
+export async function viewInstitutions(): Promise<Office[]> {
+  return await prisma.office.findMany({
+    where: { Institution: { NOT: undefined } },
+    include: {
+      Institution: true
+    }
+  })
+}
