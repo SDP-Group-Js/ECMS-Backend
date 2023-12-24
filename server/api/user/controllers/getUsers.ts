@@ -4,7 +4,7 @@ const prisma = new PrismaClient()
 
 export async function getPublicUsers(): Promise<PublicUser[]> {
   try {
-    const publicUsers: PublicUser[] = await prisma.publicUser.findMany()
+    const publicUsers: PublicUser[] = await prisma.publicUser.findMany({include: {complaints: true}})
     return publicUsers
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -22,7 +22,7 @@ export async function getPublicUsers(): Promise<PublicUser[]> {
 
 export async function getUsers(): Promise<User[]> {
   try {
-    const users: User[] = await prisma.user.findMany()
+    const users: User[] = await prisma.user.findMany({include: {office: true}})
     return users
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
