@@ -10,7 +10,8 @@ import {
   getUsers,
   getPublicUsers,
   publicUserExists,
-  createUserByAdmin
+  createUserByAdmin,
+  createPublicUserByAdmin
 } from "./controllers"
 import authenticate from "../../middleware/authenticated"
 
@@ -35,6 +36,14 @@ interface User {
   userName: string
   userOfficeId: string
   userRole: UserRole
+}
+
+interface PublicUserToBeCreatedByAdmin {
+  userEmail: string
+  userPassword: string
+  userNIC: string
+  userName: string
+  userPhone: string
 }
 
 interface UserToBeCreatedByAdmin {
@@ -147,6 +156,26 @@ userRouter
       userName,
       userOfficeId,
       userRole
+    )
+    return res.json(newUser)
+  })
+
+userRouter
+  .route("/admin/createPublicUserByAdmin")
+  .post(authenticate, async (req: Request, res: Response) => {
+    const {
+      userEmail,
+      userPassword,
+      userNIC,
+      userName,
+      userPhone
+    }: PublicUserToBeCreatedByAdmin = req.body
+    const newUser = await createPublicUserByAdmin(
+      userEmail,
+      userPassword,
+      userNIC,
+      userName,
+      userPhone
     )
     return res.json(newUser)
   })

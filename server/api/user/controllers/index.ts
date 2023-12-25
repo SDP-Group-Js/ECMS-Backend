@@ -5,6 +5,7 @@ import { getUser, getPublicUser, getECMSUser } from "./getUserDetails"
 import { getUsers, getPublicUsers } from "./getUsers"
 import publicUserExists from "./publicUserExists"
 import createUserByAdmin from "./createUserByAdmin"
+import createPublicUserByAdmin from "./createPublicUserByAdmin"
 
 export {
   createUser,
@@ -17,5 +18,6 @@ export {
   getUsers,
   getPublicUsers,
   publicUserExists,
-  createUserByAdmin
+  createUserByAdmin,
+  createPublicUserByAdmin
 }
