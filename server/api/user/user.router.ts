@@ -9,7 +9,8 @@ import {
   getPublicUser,
   getUsers,
   getPublicUsers,
-  publicUserExists
+  publicUserExists,
+  createUserByAdmin
 } from "./controllers"
 import authenticate from "../../middleware/authenticated"
 
@@ -31,6 +32,14 @@ interface PublicUser {
 
 interface User {
   userId: string
+  userName: string
+  userOfficeId: string
+  userRole: UserRole
+}
+
+interface UserToBeCreatedByAdmin {
+  userEmail: string
+  userPassword: string
   userName: string
   userOfficeId: string
   userRole: UserRole
@@ -120,6 +129,26 @@ userRouter
     const nicExists: boolean = await publicUserExists(userNIC)
     if (nicExists) return res.json({ publicUserWithNicExists: true })
     else return res.json({ publicUserWithNicExists: false })
+  })
+
+userRouter
+  .route("/admin/createUserByAdmin")
+  .post(authenticate, async (req: Request, res: Response) => {
+    const {
+      userEmail,
+      userPassword,
+      userName,
+      userOfficeId,
+      userRole
+    }: UserToBeCreatedByAdmin = req.body
+    const newUser = await createUserByAdmin(
+      userEmail,
+      userPassword,
+      userName,
+      userOfficeId,
+      userRole
+    )
+    return res.json(newUser)
   })
 
 export default userRouter

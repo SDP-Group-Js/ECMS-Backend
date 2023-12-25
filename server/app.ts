@@ -5,6 +5,15 @@ require("dotenv").config()
 
 const app = express()
 
+// Add firebase service account
+const admin = require("firebase-admin")
+const serviceAccount = require("../config/sdpgroupjs-firebase-adminsdk-fe3do-37b05ea194.json")
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  })
+}
+
 // Add express.json middleware
 app.use(express.json())
 

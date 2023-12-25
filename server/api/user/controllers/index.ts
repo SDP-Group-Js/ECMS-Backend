@@ -4,6 +4,7 @@ import { updateUser, updatePublicUser } from "./updateUser"
 import { getUser, getPublicUser, getECMSUser } from "./getUserDetails"
 import { getUsers, getPublicUsers } from "./getUsers"
 import publicUserExists from "./publicUserExists"
+import createUserByAdmin from "./createUserByAdmin"
 
 export {
   createUser,
@@ -15,5 +16,6 @@ export {
   getECMSUser,
   getUsers,
   getPublicUsers,
-  publicUserExists
+  publicUserExists,
+  createUserByAdmin
 }
