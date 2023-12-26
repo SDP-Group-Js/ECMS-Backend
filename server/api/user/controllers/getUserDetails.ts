@@ -44,7 +44,8 @@ export async function getECMSUser(userId: string): Promise<User> {
                     Branch: true,
                     BeatOffice: true
                   }
-                }
+                },
+                institutionWorkflow: true
               }
             },
             involvedInvestigations: {
