@@ -55,18 +55,12 @@ institutionRouter
   })
   .put(async (req: Request, res: Response) => {
     const officeId: string = req.params.id.toString()
-    const {
-      officeName,
-      officeDescription,
-      officeType,
-      parentOfficeId
-    }: OfficeData = req.body
+    const { officeName, officeDescription, officeType }: OfficeData = req.body
     const updatedOffice = await updateOffice({
       officeId,
       officeName,
       officeDescription,
-      officeType,
-      parentOfficeId
+      officeType
     })
     return res.json(updatedOffice)
   })

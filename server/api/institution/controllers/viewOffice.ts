@@ -14,9 +14,9 @@ export async function viewOffices(): Promise<Office[]> {
   return await prisma.office.findMany({
     include: {
       Institution: true,
-      Division: true,
-      Branch: true,
-      BeatOffice: true
+      Division: { include: { Institution: { include: { office: true } } } },
+      Branch: { include: { Division: { include: { office: true } } } },
+      BeatOffice: { include: { Branch: { include: { office: true } } } }
     }
   })
 }

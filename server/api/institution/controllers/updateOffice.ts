@@ -13,15 +13,13 @@ interface OfficeData {
   officeName: string
   officeDescription: string
   officeType: OfficeType
-  parentOfficeId: string | null | undefined
 }
 
-export default async function createOffice({
+export default async function updateOffice({
   officeId,
   officeName,
   officeDescription,
-  officeType,
-  parentOfficeId
+  officeType
 }: OfficeData): Promise<Office> {
   try {
     let office: Office | null
@@ -34,45 +32,28 @@ export default async function createOffice({
         }
       })
     } else {
-      if (!parentOfficeId) throw new Error(`Parent Office Id cannot be empty`)
       if (officeType == OfficeType.Division) {
-        const parentInstitutionId: string = await getOfficeInstitutionId(
-          parentOfficeId
-        )
         office = await prisma.office.update({
           where: { id: officeId },
           data: {
             name: officeName,
-            description: officeDescription,
-            Division: {
-              update: { Institution: { connect: { id: parentInstitutionId } } }
-            }
+            description: officeDescription
           }
         })
       } else if (officeType == OfficeType.Branch) {
-        const parentDivisionId: string = await getOfficeDivisionId(
-          parentOfficeId
-        )
         office = await prisma.office.update({
           where: { id: officeId },
           data: {
             name: officeName,
-            description: officeDescription,
-            Branch: {
-              update: { Division: { connect: { id: parentDivisionId } } }
-            }
+            description: officeDescription
           }
         })
       } else if (officeType == OfficeType.BeatOffice) {
-        const parentBranchId: string = await getOfficeBranchId(parentOfficeId)
         office = await prisma.office.update({
           where: { id: officeId },
           data: {
             name: officeName,
-            description: officeDescription,
-            BeatOffice: {
-              update: { Branch: { connect: { id: parentBranchId } } }
-            }
+            description: officeDescription
           }
         })
       } else {
