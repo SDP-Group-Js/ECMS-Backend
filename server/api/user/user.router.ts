@@ -59,125 +59,173 @@ const userRouter: Router = express.Router()
 userRouter
   .route("/users")
   .get(authenticate, async (req: Request, res: Response) => {
-    const users = await getUsers()
-    res.json(users)
+    try {
+      const users = await getUsers()
+      res.json(users)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
   .post(authenticate, async (req: Request, res: Response) => {
-    const { userId, userName, userOfficeId, userRole }: User = req.body
-    const newUser = await createUser(userId, userName, userOfficeId, userRole)
-    return res.json(newUser)
+    try {
+      const { userId, userName, userOfficeId, userRole }: User = req.body
+      const newUser = await createUser(userId, userName, userOfficeId, userRole)
+      return res.json(newUser)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
   .put(authenticate, async (req: Request, res: Response) => {
-    const { userId, userName, userOfficeId, userRole }: User = req.body
-    const updatedUser = await updateUser(
-      userId,
-      userName,
-      userOfficeId,
-      userRole
-    )
-    return res.json(updatedUser)
+    try {
+      const { userId, userName, userOfficeId, userRole }: User = req.body
+      const updatedUser = await updateUser(
+        userId,
+        userName,
+        userOfficeId,
+        userRole
+      )
+      return res.json(updatedUser)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
 userRouter
   .route("/users/:id")
   .get(authenticate, async (req: any, res: Response) => {
-    const userId: string = req.params.id
-    const user = await getUser(userId)
-    return res.json(user)
+    try {
+      const userId: string = req.params.id
+      const user = await getUser(userId)
+      return res.json(user)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
 userRouter
   .route("/users/getDetails/:id")
   .get(authenticate, async (req: any, res: Response) => {
-    const userId: string = req.params.id
-    console.log(userId)
-    const user = await getECMSUser(userId)
-    console.log(user)
-    return res.json(user)
+    try {
+      const userId: string = req.params.id
+      console.log(userId)
+      const user = await getECMSUser(userId)
+      console.log(user)
+      return res.json(user)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
 userRouter
   .route("/publicUsers")
   .get(authenticate, async (req: Request, res: Response) => {
-    const publicUsers = await getPublicUsers()
-    res.json(publicUsers)
+    try {
+      const publicUsers = await getPublicUsers()
+      res.json(publicUsers)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
   .post(async (req: Request, res: Response) => {
-    const { userId, userNIC, userName, userPhone }: PublicUser = req.body
-    const newPublicUser = await registerUser(
-      userId,
-      userNIC,
-      userName,
-      userPhone
-    )
-    return res.json(newPublicUser)
+    try {
+      const { userId, userNIC, userName, userPhone }: PublicUser = req.body
+      const newPublicUser = await registerUser(
+        userId,
+        userNIC,
+        userName,
+        userPhone
+      )
+      return res.json(newPublicUser)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
   .put(authenticate, async (req: Request, res: Response) => {
-    const { userId, userNIC, userName, userPhone }: PublicUser = req.body
-    const updatedPublicUser = await updatePublicUser(
-      userId,
-      userNIC,
-      userName,
-      userPhone
-    )
-    return res.json(updatedPublicUser)
+    try {
+      const { userId, userNIC, userName, userPhone }: PublicUser = req.body
+      const updatedPublicUser = await updatePublicUser(
+        userId,
+        userNIC,
+        userName,
+        userPhone
+      )
+      return res.json(updatedPublicUser)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
 userRouter
   .route("/publicUsers/:id")
   .get(authenticate, async (req: Request, res: Response) => {
-    const userId: string = req.params.id.toString()
-    const publicUser = await getPublicUser(userId)
-    return res.json(publicUser)
+    try {
+      const userId: string = req.params.id.toString()
+      const publicUser = await getPublicUser(userId)
+      return res.json(publicUser)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
 userRouter
   .route("/publicUsers/:nic/exists")
   .get(async (req: Request, res: Response) => {
-    const userNIC: string = req.params.nic.toString()
-    const nicExists: boolean = await publicUserExists(userNIC)
-    if (nicExists) return res.json({ publicUserWithNicExists: true })
-    else return res.json({ publicUserWithNicExists: false })
+    try {
+      const userNIC: string = req.params.nic.toString()
+      const nicExists: boolean = await publicUserExists(userNIC)
+      if (nicExists) return res.json({ publicUserWithNicExists: true })
+      else return res.json({ publicUserWithNicExists: false })
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
 userRouter
   .route("/admin/createUserByAdmin")
   .post(authenticate, async (req: Request, res: Response) => {
-    const {
-      userEmail,
-      userPassword,
-      userName,
-      userOfficeId,
-      userRole
-    }: UserToBeCreatedByAdmin = req.body
-    const newUser = await createUserByAdmin(
-      userEmail,
-      userPassword,
-      userName,
-      userOfficeId,
-      userRole
-    )
-    return res.json(newUser)
+    try {
+      const {
+        userEmail,
+        userPassword,
+        userName,
+        userOfficeId,
+        userRole
+      }: UserToBeCreatedByAdmin = req.body
+      const newUser = await createUserByAdmin(
+        userEmail,
+        userPassword,
+        userName,
+        userOfficeId,
+        userRole
+      )
+      return res.json(newUser)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
 userRouter
   .route("/admin/createPublicUserByAdmin")
   .post(authenticate, async (req: Request, res: Response) => {
-    const {
-      userEmail,
-      userPassword,
-      userNIC,
-      userName,
-      userPhone
-    }: PublicUserToBeCreatedByAdmin = req.body
-    const newUser = await createPublicUserByAdmin(
-      userEmail,
-      userPassword,
-      userNIC,
-      userName,
-      userPhone
-    )
-    return res.json(newUser)
+    try {
+      const {
+        userEmail,
+        userPassword,
+        userNIC,
+        userName,
+        userPhone
+      }: PublicUserToBeCreatedByAdmin = req.body
+      const newUser = await createPublicUserByAdmin(
+        userEmail,
+        userPassword,
+        userNIC,
+        userName,
+        userPhone
+      )
+      return res.json(newUser)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
 export default userRouter
