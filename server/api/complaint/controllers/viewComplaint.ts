@@ -13,7 +13,8 @@ export default async function viewComplaint(
             include: { actions: { include: { user: true } } }
           }
         }
-      }
+      },
+      complainer: true
     }
   })
   if (!complaint) throw new Error(`Complaint with Id ${complaintId} not found`)

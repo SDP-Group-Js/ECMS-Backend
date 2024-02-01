@@ -4,6 +4,7 @@ import {
   viewComplaint,
   allocateComplaint,
   viewComplaints,
+  viewUnAllocatedComplaints,
   viewComplaintsOfUser
 } from "./controllers"
 import authenticate from "../../middleware/authenticated"
@@ -30,37 +31,66 @@ complaintRouter.use(authenticate)
 complaintRouter
   .route("/")
   .get(async (req: Request, res: Response) => {
-    const complaints = await viewComplaints()
-    res.json(complaints)
+    try {
+      const complaints = await viewComplaints()
+      res.json(complaints)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
   .post(async (req: Request, res: Response) => {
-    const { complaintTitle, complaintDescription, complainerId }: Complaint =
-      req.body
-    const complaint = await reportComplaint(
-      complaintTitle,
-      complaintDescription,
-      complainerId
-    )
-    return res.json(complaint)
+    try {
+      const { complaintTitle, complaintDescription, complainerId }: Complaint =
+        req.body
+      const complaint = await reportComplaint(
+        complaintTitle,
+        complaintDescription,
+        complainerId
+      )
+      return res.json(complaint)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
   .patch(async (req: Request, res: Response) => {
-    const { complaintId, institutionId }: Allocation = req.body
-    const complaint = await allocateComplaint(complaintId, institutionId)
-    return res.json(complaint)
+    try {
+      const { complaintId, institutionId }: Allocation = req.body
+      const complaint = await allocateComplaint(complaintId, institutionId)
+      return res.json(complaint)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
+complaintRouter.route("/unallocatedComplaints").get(async (req, res) => {
+  try {
+    const complaints = await viewUnAllocatedComplaints()
+    return res.json(complaints)
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message })
+  }
+})
+
 complaintRouter.route("/:id").get(async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id)
-  const complaint = await viewComplaint(id)
-  return res.json(complaint)
+  try {
+    const id = parseInt(req.params.id)
+    const complaint = await viewComplaint(id)
+    return res.json(complaint)
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message })
+  }
 })
 
 complaintRouter
   .route("/userComplaints/:userId")
   .get(async (req: Request, res: Response) => {
-    const userId = req.params.userId.toString()
-    const complaints = await viewComplaintsOfUser(userId)
-    return res.json(complaints)
+    try {
+      const userId = req.params.userId.toString()
+      const complaints = await viewComplaintsOfUser(userId)
+      return res.json(complaints)
+    } catch (error: any) {
+      res.status(500).json({ error: error?.message })
+    }
   })
 
 export default complaintRouter

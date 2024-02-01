@@ -37,7 +37,15 @@ export async function getECMSUser(userId: string): Promise<User> {
                 investigationStages: {
                   include: { actions: { include: { user: true } } }
                 },
-                involvedParties: true
+                involvedParties: {
+                  include: {
+                    Institution: true,
+                    Division: true,
+                    Branch: true,
+                    BeatOffice: true
+                  }
+                },
+                institutionWorkflow: true
               }
             },
             involvedInvestigations: {
@@ -50,15 +58,46 @@ export async function getECMSUser(userId: string): Promise<User> {
               }
             },
             workflows: { include: { office: true, investigations: true } },
-            Institution: { include: { complaints: true } },
+            Institution: {
+              include: {
+                complaints: {
+                  include: { complainer: true, investigation: true }
+                },
+                divisions: {
+                  include: { office: true }
+                }
+              }
+            },
             Division: {
-              include: { Institution: { include: { complaints: true } } }
+              include: {
+                Institution: {
+                  include: {
+                    complaints: {
+                      include: { complainer: true, investigation: true }
+                    },
+                    office: true
+                  }
+                },
+                branches: {
+                  include: { office: true }
+                }
+              }
             },
             Branch: {
               include: {
                 Division: {
-                  include: { Institution: { include: { complaints: true } } }
-                }
+                  include: {
+                    Institution: {
+                      include: {
+                        complaints: {
+                          include: { complainer: true, investigation: true }
+                        },
+                        office: true
+                      }
+                    }
+                  }
+                },
+                offices: { include: { office: true } }
               }
             },
             BeatOffice: {
@@ -67,7 +106,14 @@ export async function getECMSUser(userId: string): Promise<User> {
                   include: {
                     Division: {
                       include: {
-                        Institution: { include: { complaints: true } }
+                        Institution: {
+                          include: {
+                            complaints: {
+                              include: { complainer: true, investigation: true }
+                            },
+                            office: true
+                          }
+                        }
                       }
                     }
                   }

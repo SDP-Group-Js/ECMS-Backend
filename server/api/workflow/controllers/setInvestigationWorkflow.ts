@@ -45,7 +45,7 @@ export default async function setInvestigationWorkflow(
                   return {
                     stageName: stage,
                     order: index + 1,
-                    status: "Pending"
+                    status: index == 1 ? "Ongoing" : "Pending"
                   }
                 }
               )

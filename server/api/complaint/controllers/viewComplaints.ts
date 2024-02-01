@@ -22,3 +22,13 @@ export async function viewComplaintsOfUser(
     }
   })
 }
+
+export async function viewUnAllocatedComplaints(): Promise<Complaint[]> {
+  return await prisma.complaint.findMany({
+    where: { institutionId: null },
+    include: {
+      complainer: true,
+      investigation: true
+    }
+  })
+}

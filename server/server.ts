@@ -13,7 +13,7 @@ const server = express()
 server.use(
   cors({
     origin: "http://localhost:3000",
-    methods: "GET, POST, PUT, DELETE, OPTIONS",
+    methods: "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     allowedHeaders: "Origin, Content-Type, Accept, Authorization"
   })
 )
