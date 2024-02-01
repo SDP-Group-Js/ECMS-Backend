@@ -7,7 +7,6 @@ const app = express()
 
 // Add express.json middleware
 app.use(express.json())
-//app.use(authenticate)
 
 // Attach routes in to app
 app.use("/api", apiRouter)
