@@ -1,0 +1,16 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const express_1 = tslib_1.__importDefault(require("express"));
+const complaint_router_1 = tslib_1.__importDefault(require("./complaint/complaint.router"));
+const institution_router_1 = tslib_1.__importDefault(require("./institution/institution.router"));
+const investigation_router_1 = tslib_1.__importDefault(require("./investigation/investigation.router"));
+const user_router_1 = tslib_1.__importDefault(require("./user/user.router"));
+const workflow_router_1 = tslib_1.__importDefault(require("./workflow/workflow.router"));
+const apiRouter = express_1.default.Router();
+apiRouter.use('/complaint', complaint_router_1.default);
+apiRouter.use('/institution', institution_router_1.default);
+apiRouter.use('/investigation', investigation_router_1.default);
+apiRouter.use('/workflow', workflow_router_1.default);
+apiRouter.use('/user', user_router_1.default);
+exports.default = apiRouter;

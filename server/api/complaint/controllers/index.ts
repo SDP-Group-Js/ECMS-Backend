@@ -1,17 +1,6 @@
-import allocateComplaint from "./allocateComplaint"
-import reportComplaint from "./reportComplaint"
-import viewComplaints from "./viewComplaints"
-import {
-  viewComplaintsOfUser,
-  viewUnAllocatedComplaints
-} from "./viewComplaints"
-import viewComplaint from "./viewComplaint"
+import allocateComplaint from './allocateComplaint';
+import reportComplaint from './reportComplaint';
+import viewComplaint from './viewComplaint';
+import viewComplaints, { viewComplaintsOfUser, viewUnAllocatedComplaints } from './viewComplaints';
 
-export {
-  allocateComplaint,
-  reportComplaint,
-  viewComplaints,
-  viewComplaintsOfUser,
-  viewUnAllocatedComplaints,
-  viewComplaint
-}
+export { allocateComplaint, reportComplaint, viewComplaint, viewComplaints, viewComplaintsOfUser, viewUnAllocatedComplaints };

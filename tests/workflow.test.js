@@ -1,5 +1,10 @@
 // workflowController.test.js
-import { createInvestigationWorkflow, createInstitutionWorkflow, updateInstitutionWorkflow, updateInvestigationWorkflow } from '../server/api/workflow/controllers';
+import {
+  createInstitutionWorkflow,
+  createInvestigationWorkflow,
+  updateInstitutionWorkflow,
+  updateInvestigationWorkflow,
+} from '../server/api/workflow/controllers';
 
 describe('Workflow Controller', () => {
   describe('createInstitutionWorkflow', () => {

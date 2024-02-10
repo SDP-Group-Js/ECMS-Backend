@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.viewOffices = exports.viewOffice = exports.viewInstitutions = exports.updateOffice = exports.createOffice = void 0;
+const tslib_1 = require("tslib");
+const createOffice_1 = tslib_1.__importDefault(require("./createOffice"));
+exports.createOffice = createOffice_1.default;
+const updateOffice_1 = tslib_1.__importDefault(require("./updateOffice"));
+exports.updateOffice = updateOffice_1.default;
+const viewOffice_1 = require("./viewOffice");
+Object.defineProperty(exports, "viewInstitutions", { enumerable: true, get: function () { return viewOffice_1.viewInstitutions; } });
+Object.defineProperty(exports, "viewOffice", { enumerable: true, get: function () { return viewOffice_1.viewOffice; } });
+Object.defineProperty(exports, "viewOffices", { enumerable: true, get: function () { return viewOffice_1.viewOffices; } });

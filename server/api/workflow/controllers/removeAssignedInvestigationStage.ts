@@ -1,5 +1,4 @@
-import { Prisma } from "@prisma/client"
-import prisma from "../../../../prisma/client"
+import prisma from '../../../../prisma/client';
 
 /**
  * Unassigns a officer from a investigation stage
@@ -10,26 +9,22 @@ import prisma from "../../../../prisma/client"
  * @throws Error if the institution is not found.
  */
 
-export default async function removeAssignedInvestigationStage(
-  investigationStageId: number,
-  officeId: string,
-  officers: string[]
-) {
+export default async function removeAssignedInvestigationStage(investigationStageId: number, officeId: string, officers: string[]) {
   try {
     const updatedInvestigation = await prisma.investigationStage.update({
       where: {
-        id: investigationStageId
+        id: investigationStageId,
       },
       data: {
         assignedOfficers: {
-          disconnect: [...officers.map((officer) => ({ id: officer }))]
-        }
-      }
-    })
+          disconnect: [...officers.map((officer) => ({ id: officer }))],
+        },
+      },
+    });
 
-    return updatedInvestigation
+    return updatedInvestigation;
   } catch (error) {
-    console.log(error)
-    throw error
+    console.log(error);
+    throw error;
   }
 }
