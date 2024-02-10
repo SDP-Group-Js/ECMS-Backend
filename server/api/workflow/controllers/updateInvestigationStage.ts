@@ -1,5 +1,4 @@
-import { Prisma } from "@prisma/client"
-import prisma from "../../../../prisma/client"
+import prisma from '../../../../prisma/client';
 
 /**
  * Updates Investigation Stage Details
@@ -11,27 +10,22 @@ import prisma from "../../../../prisma/client"
  * @throws Error if the institution is not found.
  */
 
-export default async function updateInvestigationStage(
-  investigationStageId: number,
-  description: string,
-  status: string,
-  tasks: string[]
-) {
+export default async function updateInvestigationStage(investigationStageId: number, description: string, status: string, tasks: string[]) {
   try {
     const updatedInvestigation = await prisma.investigationStage.update({
       where: {
-        id: investigationStageId
+        id: investigationStageId,
       },
       data: {
         description,
         status,
-        tasks
-      }
-    })
+        tasks,
+      },
+    });
 
-    return updatedInvestigation
+    return updatedInvestigation;
   } catch (error) {
-    console.log(error)
-    throw error
+    console.log(error);
+    throw error;
   }
 }

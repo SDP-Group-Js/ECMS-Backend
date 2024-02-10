@@ -1,23 +1,23 @@
-import createUser from "./createUser"
-import registerUser from "./registerUser"
-import { updateUser, updatePublicUser } from "./updateUser"
-import { getUser, getPublicUser, getECMSUser } from "./getUserDetails"
-import { getUsers, getPublicUsers } from "./getUsers"
-import publicUserExists from "./publicUserExists"
-import createUserByAdmin from "./createUserByAdmin"
-import createPublicUserByAdmin from "./createPublicUserByAdmin"
+import createPublicUserByAdmin from './createPublicUserByAdmin';
+import createUser from './createUser';
+import createUserByAdmin from './createUserByAdmin';
+import { getECMSUser, getPublicUser, getUser } from './getUserDetails';
+import { getPublicUsers, getUsers } from './getUsers';
+import publicUserExists from './publicUserExists';
+import registerUser from './registerUser';
+import { updatePublicUser, updateUser } from './updateUser';
 
 export {
+  createPublicUserByAdmin,
   createUser,
-  registerUser,
-  updateUser,
-  updatePublicUser,
-  getUser,
-  getPublicUser,
-  getECMSUser,
-  getUsers,
-  getPublicUsers,
-  publicUserExists,
   createUserByAdmin,
-  createPublicUserByAdmin
-}
+  getECMSUser,
+  getPublicUser,
+  getPublicUsers,
+  getUser,
+  getUsers,
+  publicUserExists,
+  registerUser,
+  updatePublicUser,
+  updateUser,
+};
