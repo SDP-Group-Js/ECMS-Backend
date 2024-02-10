@@ -2,9 +2,9 @@ name: Express CI
 
 on:
   push:
-    branches: [main, dev]
+    branches: [main, develop, dev]
   pull_request:
-    branches: [main, dev]
+    branches: [main, develop, dev]
 
 jobs:
   build:
