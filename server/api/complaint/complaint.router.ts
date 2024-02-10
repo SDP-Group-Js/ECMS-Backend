@@ -26,6 +26,7 @@ complaintRouter
   .get(async (req: Request, res: Response) => {
     try {
       const complaints = await viewComplaints();
+      console.log(complaints)
       res.json(complaints);
     } catch (error: any) {
       res.status(500).json({ error: error?.message });
