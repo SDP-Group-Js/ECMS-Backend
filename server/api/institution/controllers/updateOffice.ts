@@ -71,50 +71,50 @@ export default async function updateOffice({ officeId, officeName, officeDescrip
   }
 }
 
-async function getOfficeInstitutionId(officeId: string): Promise<string> {
-  try {
-    const office = await prisma.office.findUnique({
-      where: { id: officeId },
-      select: { Institution: { select: { id: true } } },
-    });
-    if (!office) throw new Error(`Office with ID ${officeId} not found.`);
-    const institutionId = office.Institution?.id || null;
-    if (!institutionId) throw new Error(`Institution ID not found for office with ID ${officeId}.`);
-    return institutionId;
-  } catch (error: any) {
-    console.error('Error retrieving office institution ID:', error.message);
-    throw error;
-  }
-}
+// async function getOfficeInstitutionId(officeId: string): Promise<string> {
+//   try {
+//     const office = await prisma.office.findUnique({
+//       where: { id: officeId },
+//       select: { Institution: { select: { id: true } } },
+//     });
+//     if (!office) throw new Error(`Office with ID ${officeId} not found.`);
+//     const institutionId = office.Institution?.id || null;
+//     if (!institutionId) throw new Error(`Institution ID not found for office with ID ${officeId}.`);
+//     return institutionId;
+//   } catch (error: any) {
+//     console.error('Error retrieving office institution ID:', error.message);
+//     throw error;
+//   }
+// }
 
-async function getOfficeDivisionId(officeId: string): Promise<string> {
-  try {
-    const office = await prisma.office.findUnique({
-      where: { id: officeId },
-      select: { Division: { select: { id: true } } },
-    });
-    if (!office) throw new Error(`Office with ID ${officeId} not found.`);
-    const DivisionId = office.Division?.id || null;
-    if (!DivisionId) throw new Error(`Institution ID not found for office with ID ${officeId}.`);
-    return DivisionId;
-  } catch (error: any) {
-    console.error('Error retrieving office institution ID:', error.message);
-    throw error;
-  }
-}
+// async function getOfficeDivisionId(officeId: string): Promise<string> {
+//   try {
+//     const office = await prisma.office.findUnique({
+//       where: { id: officeId },
+//       select: { Division: { select: { id: true } } },
+//     });
+//     if (!office) throw new Error(`Office with ID ${officeId} not found.`);
+//     const DivisionId = office.Division?.id || null;
+//     if (!DivisionId) throw new Error(`Institution ID not found for office with ID ${officeId}.`);
+//     return DivisionId;
+//   } catch (error: any) {
+//     console.error('Error retrieving office institution ID:', error.message);
+//     throw error;
+//   }
+// }
 
-async function getOfficeBranchId(officeId: string): Promise<string> {
-  try {
-    const office = await prisma.office.findUnique({
-      where: { id: officeId },
-      select: { Branch: { select: { id: true } } },
-    });
-    if (!office) throw new Error(`Office with ID ${officeId} not found.`);
-    const BranchId = office.Branch?.id || null;
-    if (!BranchId) throw new Error(`Institution ID not found for office with ID ${officeId}.`);
-    return BranchId;
-  } catch (error: any) {
-    console.error('Error retrieving office institution ID:', error.message);
-    throw error;
-  }
-}
+// async function getOfficeBranchId(officeId: string): Promise<string> {
+//   try {
+//     const office = await prisma.office.findUnique({
+//       where: { id: officeId },
+//       select: { Branch: { select: { id: true } } },
+//     });
+//     if (!office) throw new Error(`Office with ID ${officeId} not found.`);
+//     const BranchId = office.Branch?.id || null;
+//     if (!BranchId) throw new Error(`Institution ID not found for office with ID ${officeId}.`);
+//     return BranchId;
+//   } catch (error: any) {
+//     console.error('Error retrieving office institution ID:', error.message);
+//     throw error;
+//   }
+// }

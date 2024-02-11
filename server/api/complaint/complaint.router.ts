@@ -13,10 +13,6 @@ interface Allocation {
   institutionId: string;
 }
 
-interface ComplaintsOfUser {
-  userId: string;
-}
-
 const complaintRouter: Router = express.Router();
 
 complaintRouter.use(authenticate);
