@@ -1,5 +1,5 @@
-import { Prisma } from '@prisma/client';
-import prisma from '../../../../prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 /**
  * Creates a workflow for an Instition/Division/Branch/Office
