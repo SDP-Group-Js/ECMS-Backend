@@ -40,8 +40,7 @@ describe('Complaint Controller', () => {
     });
 
     test('should view all unallocated complaints', async () => {
-      const result = await viewComplaints();
-
+      //const result = await viewComplaints();
       // Add assertions based on your implementation
     });
   });

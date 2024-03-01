@@ -1,4 +1,5 @@
-import prisma from '../../../../prisma/client';
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 /**
  * Starts an investigation for a complaint in a specific institution.
