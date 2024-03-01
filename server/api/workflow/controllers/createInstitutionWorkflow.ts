@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client"
-import prisma from "../../../../prisma/client"
+import { Prisma, PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 /**
  * Creates a workflow for an Instition/Division/Branch/Office
@@ -12,21 +12,16 @@ import prisma from "../../../../prisma/client"
  * @throws Error if the institution/office is not found.
  */
 
-export default async function createInstitutionWorkflow(
-  officeId: string,
-  stages: string[],
-  name: string,
-  description: string
-) {
+export default async function createInstitutionWorkflow(officeId: string, stages: string[], name: string, description: string) {
   try {
     if (officeId.length > 0) {
       const office = await prisma.office.findUnique({
         where: {
-          id: officeId
-        }
-      })
+          id: officeId,
+        },
+      });
 
-      if (office == null) throw new Error("Invalid OfficeId")
+      if (office == null) throw new Error('Invalid OfficeId');
 
       const newWorkflow = await prisma.workflow.create({
         data: {
@@ -35,22 +30,20 @@ export default async function createInstitutionWorkflow(
           stages: stages,
           office: {
             connect: {
-              id: officeId
-            }
-          }
-        }
-      })
+              id: officeId,
+            },
+          },
+        },
+      });
 
-      return newWorkflow
+      return newWorkflow;
     }
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === "P2002") {
-        console.log(
-          "There is a unique constraint violation, a new workflow cannot be created with this email"
-        )
+      if (error.code === 'P2002') {
+        console.log('There is a unique constraint violation, a new workflow cannot be created with this email');
       }
     }
-    throw error
+    throw error;
   }
 }

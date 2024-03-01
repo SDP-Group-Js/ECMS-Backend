@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client"
-import prisma from "../../../../prisma/client"
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 /**
  * Updates Institution Workflow
@@ -10,22 +10,17 @@ import prisma from "../../../../prisma/client"
  * @throws Error if the institution is not found.
  */
 
-export default async function updateInstitutionWorkflow(
-  id: number,
-  stages: string[],
-  name: string,
-  description: string
-) {
+export default async function updateInstitutionWorkflow(id: number, stages: string[], name: string, description: string) {
   const updatedWorkflow = await prisma.workflow.update({
     where: {
-      id: id
+      id: id,
     },
     data: {
       name: name,
       description: description,
-      stages: stages
-    }
-  })
+      stages: stages,
+    },
+  });
 
-  return updatedWorkflow
+  return updatedWorkflow;
 }
