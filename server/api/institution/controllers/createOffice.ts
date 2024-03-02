@@ -24,7 +24,7 @@ export default async function createOffice({
   try {
     let office: Office | null
     if (officeType == OfficeType.Institution) {
-      office = await await prisma.office.create({
+      office = await prisma.office.create({
         data: {
           name: officeName,
           description: officeDescription,
@@ -46,7 +46,7 @@ export default async function createOffice({
         })
         if (!office) throw new Error(`Division not created`)
       } else if (officeType == OfficeType.Branch) {
-        office = await await prisma.office.create({
+        office = await prisma.office.create({
           data: {
             name: officeName,
             description: officeDescription,
