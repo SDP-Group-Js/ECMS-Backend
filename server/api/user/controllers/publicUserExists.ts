@@ -1,13 +1,11 @@
-import { Prisma, PrismaClient, PublicUser } from "@prisma/client"
+import { PrismaClient, PublicUser } from '@prisma/client';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export default async function publicUserExists(
-  userNIC: string
-): Promise<boolean> {
+export default async function publicUserExists(userNIC: string): Promise<boolean> {
   const publicUser: PublicUser | null = await prisma.publicUser.findUnique({
-    where: { nic: userNIC }
-  })
-  if (publicUser) return true
-  return false
+    where: { nic: userNIC },
+  });
+  if (publicUser) return true;
+  return false;
 }

@@ -1,5 +1,12 @@
 // institutionController.test.js
-import { createInstitution, createDivision, createOffice, updateInstitution, updateDivision, updateOffice } from "../server/api/institution/controllers";
+import {
+  createDivision,
+  createInstitution,
+  createOffice,
+  updateDivision,
+  updateInstitution,
+  updateOffice,
+} from '../server/api/institution/controllers';
 
 describe('Institution Controller', () => {
   describe('createInstitution', () => {

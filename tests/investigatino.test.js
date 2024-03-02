@@ -1,5 +1,5 @@
 // investigationController.test.js
-import { startInvestigation, allocateInvestigation} from "../server/api/investigation/controllers";
+import { allocateInvestigation, startInvestigation } from '../server/api/investigation/controllers';
 
 describe('Investigation Controller', () => {
   describe('startInvestigation', () => {

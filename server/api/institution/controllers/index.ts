@@ -1,5 +1,5 @@
-import createOffice from "./createOffice"
-import updateOffice from "./updateOffice"
-import { viewOffices, viewOffice, viewInstitutions } from "./viewOffice"
+import createOffice from './createOffice';
+import updateOffice from './updateOffice';
+import { viewInstitutions, viewOffice, viewOffices } from './viewOffice';
 
-export { createOffice, updateOffice, viewOffices, viewOffice, viewInstitutions }
+export { createOffice, updateOffice, viewInstitutions, viewOffice, viewOffices };

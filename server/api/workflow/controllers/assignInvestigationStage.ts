@@ -1,5 +1,5 @@
-import { Prisma } from "@prisma/client"
-import prisma from "../../../../prisma/client"
+import { PrismaClient } from '@prisma/client';
+const prisma = new PrismaClient();
 
 /**
  * Assigns a officer to a investigation stage
@@ -11,11 +11,7 @@ import prisma from "../../../../prisma/client"
  * @throws Error if the institution is not found.
  */
 
-export default async function assignInvestigationStage(
-  investigationStageId: number,
-  officeId: string,
-  officers: string[]
-) {
+export default async function assignInvestigationStage(investigationStageId: number, officeId: string, officers: string[]) {
   try {
     // let setResponsibleOffice = {}
 
@@ -30,19 +26,19 @@ export default async function assignInvestigationStage(
     // }
     const updatedInvestigation = await prisma.investigationStage.update({
       where: {
-        id: investigationStageId
+        id: investigationStageId,
       },
       data: {
         officeId: officeId,
         assignedOfficers: {
-          connect: [...officers.map((officer) => ({ id: officer }))]
-        }
-      }
-    })
+          connect: [...officers.map((officer) => ({ id: officer }))],
+        },
+      },
+    });
 
-    return updatedInvestigation
+    return updatedInvestigation;
   } catch (error) {
-    console.log(error)
-    throw error
+    console.log(error);
+    throw error;
   }
 }
